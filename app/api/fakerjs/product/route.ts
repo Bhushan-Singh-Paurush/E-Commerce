@@ -1,0 +1,110 @@
+
+import { connection } from "@/lib/DB_Connection";
+import { response } from "@/lib/helperFunction/responeFuction";
+import Category from "@/models/category.model";
+import Media from "@/models/media.model";
+import Product from "@/models/product.model";
+import Variant from "@/models/variant.model";
+import { faker } from "@faker-js/faker";
+import mongoose from "mongoose";
+
+function getRandomItems(array:Array<string>, count = 1) {
+   const shuffled = array
+   let j:number
+   for(let i=array.length-1;i>0;i--)
+   {
+       j=Math.floor(Math.random()*(i+1));
+       
+       [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]
+   } 
+   return shuffled.slice(0, count);
+}
+export async function POST() {
+
+   await connection();
+   try {
+       // Fetch all categories
+       const categories = await Category.find();
+       if (categories.length === 0) {
+           return response({success:false,status:400,message: "No categories found!" });
+       }
+
+       const mediaList = await Media.find();
+       const mediaMap:Array<string> = [];
+       mediaList.forEach(media => {
+           mediaMap.push(media._id);
+       });
+
+       const colors = ["Red", "Blue", "Green", "Black"];
+       const sizes = ["S", "M", "L", "XL", "2XL"];
+
+       let products = [];
+       let variants = [];
+
+       for (const category of categories) {
+
+
+           for (let i = 0; i < 5; i++) {
+
+               const mrp = Number(faker.commerce.price({ min: 500, max: 2000, dec: 0 }));
+               const discountPercentage = faker.number.int({ min: 10, max: 50 });
+               const sellingPrice = Math.round(mrp - (mrp * discountPercentage) / 100);
+
+
+               const productId = new mongoose.Types.ObjectId();
+               const selectedMedia = getRandomItems(mediaMap, 4);
+               const product = {
+                   _id: productId,
+                   name: faker.commerce.productName(),
+                   slug: faker.lorem.slug(),
+                   category: category._id,
+                   mrp: mrp,
+                   sellingPrice: sellingPrice,
+                   discount: discountPercentage,
+                   media: selectedMedia,
+                   description: faker.commerce.productDescription(),
+                   deletedAt: null,
+                   createdAt: new Date(),
+                   updatedAt: new Date(),
+               };
+
+               products.push(product);
+
+               // Generate 20 variants (4 colors x 5 sizes)
+               for (const color of colors) {
+                   for (const size of sizes) {
+
+                       const variantMedia = getRandomItems(mediaMap, 4);
+                       variants.push({
+                           _id: new mongoose.Types.ObjectId(),
+                           product: productId,
+                           color,
+                           size,
+                           mrp: product.mrp,
+                           sellingPrice: product.sellingPrice,
+                           discount: product.discount,
+                           sku: `${product.slug}-${color}-${size}-${faker.number.int({ min: 1000, max: 9999 })}`,
+                           stock: faker.number.int({ min: 10, max: 100 }),
+                           media: variantMedia,
+                           deletedAt: null,
+                           createdAt: new Date(),
+                           updatedAt: new Date(),
+                           description:`${product.slug}-${color}-${size}`
+                       });
+                   }
+               }
+           }
+       }
+
+       // Insert data into MongoDB
+       await Product.insertMany(products);
+       await Variant.insertMany(variants);
+
+       return response({success:true, status:200, message:'Fake data generated successfully.'})
+
+   } catch (error:any) {
+       return response({success:false, status:500, message:error.message})
+
+   }
+}
+
