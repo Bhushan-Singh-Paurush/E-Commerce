@@ -6,7 +6,6 @@ import {
   WEBSITE_SHOP,
 } from "@/routes/WebsiteRoutes";
 import React, { useEffect, useMemo, useState } from "react";
-import { BreadCrumbFunction } from "../Admin/BreadCrumbFunction";
 import place_holder from "@/public/assets/images/img-placeholder.webp";
 import Image from "next/image";
 import { Rating } from "@mui/material";
@@ -20,6 +19,7 @@ import toastFunction from "@/lib/toastFunction";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ReviewAndRating from "./ReviewAndRating";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import BreadCrumbFunction from "../Admin/BreadCrumbFunction";
 
 export interface IVariant {
   sku: string;

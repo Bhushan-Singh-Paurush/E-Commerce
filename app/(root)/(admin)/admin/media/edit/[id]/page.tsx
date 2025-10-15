@@ -1,5 +1,4 @@
 "use client";
-import { BreadCrumbFunction } from "@/components/Application/Admin/BreadCrumbFunction";
 import LoadingBtn from "@/components/Application/LoadingBtn";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -23,6 +22,7 @@ import ImagePlaceholder from "@/public/assets/images/img-placeholder.webp";
 import axios from "axios";
 import toastFunction from "@/lib/toastFunction";
 import LoadingGIF from "@/components/Application/LoadingGIF";
+import BreadCrumbFunction from "@/components/Application/Admin/BreadCrumbFunction";
 const EditPage = () => {
   const { id } = useParams();
   const [updateLoading, setUpdateLoading] = useState(false);

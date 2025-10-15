@@ -1,5 +1,4 @@
-'use client'
-
+"use client"
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import type { ClassicEditor as ClassicEditorType, EditorConfig } from 'ckeditor5'

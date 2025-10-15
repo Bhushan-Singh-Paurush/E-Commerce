@@ -1,12 +1,12 @@
 "use client"
-import { BreadCrumbFunction } from '@/components/Application/Admin/BreadCrumbFunction'
+import  BreadCrumbFunction  from '@/components/Application/Admin/BreadCrumbFunction'
 import DataTable from '@/components/Application/Admin/DataTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { ADMIN_ADD_PRODUCT, ADMIN_EDIT_PRODUCT, ADMIN_PRODUCT } from '@/routes/AdminPanelRoutes'
 import { WEBSITE_HOME } from '@/routes/WebsiteRoutes'
 import Link from 'next/link'
-
+import { Suspense } from 'react'
 import React from 'react'
 import { FaPlus } from 'react-icons/fa6'
 
@@ -32,7 +32,9 @@ const Page = () => {
           </Button>
         </CardHeader>
       <CardContent className=" px-0 m-0">
+        <Suspense fallback={null}>
         <DataTable queryKey="Product" deleteUrl="/api/product/delete" fetchUrl="/api/product/get-all-product" editUrl={ADMIN_EDIT_PRODUCT}/>
+        </Suspense>
        </CardContent>
       </Card>
     </div>

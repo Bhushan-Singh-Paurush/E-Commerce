@@ -1,5 +1,4 @@
 "use client";
-import { BreadCrumbFunction } from "@/components/Application/Admin/BreadCrumbFunction";
 import DataTable from "@/components/Application/Admin/DataTable";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -9,7 +8,8 @@ import React, { useMemo } from "react";
 import user from "@/public/assets/images/user.png";
 import { Chip } from "@mui/material";
 import { MRT_ColumnDef } from "material-react-table";
-
+import { Suspense } from "react";
+import BreadCrumbFunction from "@/components/Application/Admin/BreadCrumbFunction";
 const Page = () => {
   const data = [
     {
@@ -82,12 +82,14 @@ const Page = () => {
         </CardHeader>
 
         <CardContent className=" px-0 m-0">
+          <Suspense fallback={null}>
           <DataTable
             column={column}
             queryKey="Customers"
             deleteUrl="/api/customers/delete"
             fetchUrl="/api/customers/get-all-customers"
           />
+          </Suspense>
         </CardContent>
       </Card>
     </div>

@@ -1,5 +1,4 @@
 "use client"
-import { BreadCrumbFunction } from '@/components/Application/Admin/BreadCrumbFunction'
 import LoadingBtn from '@/components/Application/LoadingBtn'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -14,6 +13,7 @@ import z from 'zod'
 import slugify from "slugify"
 import axios from 'axios'
 import toastFunction from '@/lib/toastFunction'
+import BreadCrumbFunction from '@/components/Application/Admin/BreadCrumbFunction'
 
 const Page = () => {
   const[loading,setLoading]=useState(false)  

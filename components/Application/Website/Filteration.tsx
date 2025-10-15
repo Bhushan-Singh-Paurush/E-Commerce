@@ -1,11 +1,11 @@
-
+"use client"
 import { sortingData } from "@/lib/utils";
 import React from "react";
 import {
   Select,
   SelectContent,
   SelectGroup,
-  SelectItem,
+  SelectItem, 
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"

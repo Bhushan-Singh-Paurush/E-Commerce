@@ -1,11 +1,11 @@
 "use client"
-import { BreadCrumbFunction } from '@/components/Application/Admin/BreadCrumbFunction'
+import  BreadCrumbFunction  from '@/components/Application/Admin/BreadCrumbFunction'
 import DataTable from '@/components/Application/Admin/DataTable'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { ADMIN_REVIEW } from '@/routes/AdminPanelRoutes'
 import { WEBSITE_HOME } from '@/routes/WebsiteRoutes'
 import React from 'react'
-
+import { Suspense } from 'react'
 
 const Page = () => {
   const data=[
@@ -26,7 +26,9 @@ const Page = () => {
           <h1 className=" text-2xl">All Reviews</h1>
         </CardHeader>
       <CardContent className=" px-0 m-0">
+        <Suspense fallback={null}>
         <DataTable queryKey="Review" deleteUrl="/api/review/delete" fetchUrl="/api/review/get-all-review"/>
+        </Suspense>
        </CardContent>
       </Card>
     </div>

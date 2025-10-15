@@ -15,7 +15,7 @@ type T={
       url:string
 }
 
-export function BreadCrumbFunction({data}:{data:Array<T>}) {
+export default function BreadCrumbFunction({data}:{data:Array<T>}) {
 
 
 

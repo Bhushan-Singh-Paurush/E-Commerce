@@ -1,5 +1,5 @@
 "use client";
-import { BreadCrumbFunction } from "@/components/Application/Admin/BreadCrumbFunction";
+import dynamic from "next/dynamic";
 import LoadingBtn from "@/components/Application/LoadingBtn";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -22,12 +22,16 @@ import slugify from "slugify";
 import axios from "axios";
 import toastFunction from "@/lib/toastFunction";
 import useFetch from "@/hooks/useFetch";
-import Select from "@/components/Application/Select";
-import Editor from "@/components/Application/Admin/Editor";
 import { Button } from "@/components/ui/button";
-import MediaModal from "@/components/Application/Admin/MediaModal";
+
 import Image from "next/image";
 import { ClassicEditor } from "ckeditor5";
+
+
+const Select = dynamic(() => import("@/components/Application/Select"), { ssr: false });
+const Editor = dynamic(() => import("@/components/Application/Admin/Editor"), { ssr: false });
+const MediaModal = dynamic(() => import("@/components/Application/Admin/MediaModal"), { ssr: false });
+const BreadCrumbFunction = dynamic(() => import("@/components/Application/Admin/BreadCrumbFunction"), { ssr: false });
 
 type Option = {
   label: string;

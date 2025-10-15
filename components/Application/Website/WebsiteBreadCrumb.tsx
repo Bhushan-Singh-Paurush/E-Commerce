@@ -1,3 +1,4 @@
+"use client"
 import { IbreadCrumb } from '@/app/(root)/(website)/shop/page'
 import { WEBSITE_HOME } from '@/routes/WebsiteRoutes'
 import Link from 'next/link'

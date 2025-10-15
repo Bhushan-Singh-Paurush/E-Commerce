@@ -1,5 +1,5 @@
 "use client";
-import { BreadCrumbFunction } from "@/components/Application/Admin/BreadCrumbFunction";
+import  BreadCrumbFunction  from "@/components/Application/Admin/BreadCrumbFunction";
 import LoadingBtn from "@/components/Application/LoadingBtn";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {

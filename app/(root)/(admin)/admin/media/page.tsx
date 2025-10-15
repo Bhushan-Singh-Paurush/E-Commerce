@@ -1,5 +1,5 @@
 "use client"
-import { BreadCrumbFunction } from '@/components/Application/Admin/BreadCrumbFunction'
+import BreadCrumbFunction from '@/components/Application/Admin/BreadCrumbFunction'
 import MediaData from '@/components/Application/Admin/MediaData'
 import UploadMedia from '@/components/Application/Admin/UploadMedia'
 import { Button } from '@/components/ui/button'

@@ -33,7 +33,7 @@ interface SelectProps {
   isMulti?: boolean;
 }
 
-function Select({
+export default function Select({
   options,
   selected,
   setSelected,
@@ -156,4 +156,3 @@ function Select({
   );
 }
 
-export default Select;

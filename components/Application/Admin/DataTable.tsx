@@ -72,8 +72,7 @@ export function DataTable<TData extends { _id: string }>({
     },
   });
   
-  if(isError)
-    console.log(error)
+
   const columns = useMemo<MRT_ColumnDef<TData>[]>(() => {
     
     if(column.length!==0)
