@@ -55,15 +55,22 @@ const Page = () => {
       });
     }
   }, [file,form]);
+  
 
   useEffect(() => {
-    const sub=form.watch((value)=>{
-      const name=value.name
-      if(name)
-        form.setValue("slug", slugify(name).toLowerCase());
+    const subscription=form.watch((value)=>{
+    const slug=value.slug  
+    const name = value.name;
+    if (name) {
+      const generateSlug=slugify(name).toLowerCase();
+
+      if(slug!==generateSlug)
+      form.setValue("slug", generateSlug);
+    }
     })
-    
-    return ()=>sub.unsubscribe()
+
+    return ()=>subscription.unsubscribe()
+
   }, [form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {

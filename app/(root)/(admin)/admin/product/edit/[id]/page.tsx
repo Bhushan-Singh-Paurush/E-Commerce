@@ -156,27 +156,37 @@ const EditProduct = () => {
 
   useEffect(() => {
     const subscription=form.watch((value)=>{
+    const slug=value.slug  
     const name = value.name;
     if (name) {
-      form.setValue("slug", slugify(name).toLowerCase());
+      const generateSlug=slugify(name).toLowerCase();
+
+      if(slug!==generateSlug)
+      form.setValue("slug", generateSlug);
     }
-  })
-  return subscription.unsubscribe()
+    })
+
+    return ()=>subscription.unsubscribe()
+
   }, [form]);
 
-  
-  useEffect(()=>{
+  useEffect(() => {
     const subscription=form.watch((value)=>{
-    const mrp=Number(value.mrp)
-    const sellingPrice=Number(value.sellingPrice)
-   if(mrp>0 && sellingPrice>0)
-   {
-        form.setValue("discount",Math.round(((mrp-sellingPrice)/mrp)*100))
-   }
-   })
-   return ()=>subscription.unsubscribe()
-  },[form])
+    const mrp = Number(value.mrp);
+    const sellingPrice = Number(value.sellingPrice);
+    const discount=Number(value.discount)
+    
+    if (mrp > 0 && sellingPrice > 0) {
+      const generateDiscount=Math.round(((mrp - sellingPrice) / mrp) * 100);
 
+      if(discount!==generateDiscount)
+      form.setValue("discount",generateDiscount );
+    }
+  })
+
+  return ()=>subscription.unsubscribe()
+  
+  }, [form]);
 
   
   function editor(event: unknown, editor: ClassicEditor) {

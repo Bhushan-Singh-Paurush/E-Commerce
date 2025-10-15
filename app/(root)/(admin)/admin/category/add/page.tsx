@@ -67,16 +67,21 @@ const Page = () => {
   }
 
 
-useEffect(() => {
-  const subscription = form.watch((value) => {
+  useEffect(() => {
+    const subscription=form.watch((value)=>{
+    const slug=value.slug  
     const name = value.name;
     if (name) {
-      form.setValue("slug", slugify(name).toLowerCase());
-    }
-  });
+      const generateSlug=slugify(name).toLowerCase();
 
-  return () => subscription.unsubscribe();
-}, [form]);
+      if(slug!==generateSlug)
+      form.setValue("slug", generateSlug);
+    }
+    })
+
+    return ()=>subscription.unsubscribe()
+
+  }, [form]);
 
 
   return (

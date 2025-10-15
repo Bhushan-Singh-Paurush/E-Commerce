@@ -25,8 +25,7 @@ const ReviewTavle = () => {
   const[response,setResponse]=useState<ReviewResponse[]>([])
   const{file}=useFetch({url:"/api/dashboard/admin/get-latest-review"})
   
-  if(file)
-    console.log("this is file data",file.data)
+
   useEffect(()=>{
      if(file && file.success)
       setResponse(file.data);
