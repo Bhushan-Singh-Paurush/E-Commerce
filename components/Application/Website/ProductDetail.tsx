@@ -15,17 +15,40 @@ import { HiPlus } from "react-icons/hi";
 import loading from "@/public/assets/images/loading.svg"
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "@/slices/cart";
 import toastFunction from "@/lib/toastFunction";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ReviewAndRating from "./ReviewAndRating";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+
+export interface IVariant {
+  sku: string;
+  color: string;
+  size: string;
+  mrp: number;
+  sellingPrice: number;
+  discount: number;
+  description: string;
+  media:{
+    secure_url:string
+  }[];
+  deletedAt: Date;
+  stock: number;
+  _id:string
+}
+ interface IProduct{
+    name:string,
+    slug:string,
+    discount:number,
+    description:string,
+    _id:string 
+}
 
 interface IProductDetailProps {
-  product: Record<string, any>;
+  product: IProduct;
   colors: Array<string>;
   sizes: Array<string>;
-  variant: Record<string, any>;
+  variant: IVariant;
   review:{
     average:number,count:number
   }
@@ -39,9 +62,9 @@ const ProductDetail = ({
   review,
 }: IProductDetailProps) => {
   const[qty,setQty]=useState(1)
-  const dispatch=useDispatch()
+  const dispatch=useAppDispatch()
   const[isProductAdded,setIsProductAdded]=useState(false)
-  const cartData=useSelector((state:any)=>state.cart)
+  const cartData=useAppSelector((state)=>state.cart)
   const[variantLoading,setVariantLoading]=useState(false)
 
   useEffect(()=>{
@@ -49,7 +72,7 @@ const ProductDetail = ({
    if(cartData.count>0)
    {
     
-    const index=cartData.products.findIndex((item:Record<string,any>)=>item.variantId===variant._id)
+    const index=cartData.products.findIndex((item:{variantId:string})=>item.variantId===variant._id)
     
       if(index>=0)
         setIsProductAdded(true)
@@ -60,7 +83,7 @@ const ProductDetail = ({
 
    setVariantLoading(false)
 
-  },[variant])
+  },[variant,cartData.count,cartData.products])
 
   const data = useMemo(
     () => [
@@ -77,7 +100,7 @@ const ProductDetail = ({
         url: WEBSITE_PRODUCT_DETAILS(product.slug),
       },
     ],
-    [product.slug]
+    [product.name,product.slug]
   );
 
   const [mainImage, setMainImage] = useState<string>(
@@ -117,7 +140,7 @@ const ProductDetail = ({
         {/* left section */}
         <div className=" md:sticky top-0  flex  items-start justify-between w-[100%] md:w-[50%]">
           <ul className=" flex flex-col gap-4">
-            {variant?.media?.map((item: Record<string, any>, index: any) => (
+            {variant?.media?.map((item:{secure_url:string}, index: number) => (
               <li
                 key={index}
                 className={`${
@@ -161,13 +184,13 @@ const ProductDetail = ({
             <div className=" flex gap-4 items-end">
               
               <span className=" text-2xl">
-              {parseInt(variant.sellingPrice).toLocaleString("en-IN", {
+              {variant.sellingPrice.toLocaleString("en-IN", {
                 style: "currency",
                 currency: "INR",
               })} </span>
 
               
-              <span className=" text-muted-foreground line-through">{parseInt(variant.mrp).toLocaleString("en-IN", {
+              <span className=" text-muted-foreground line-through">{variant.mrp.toLocaleString("en-IN", {
                 style: "currency",
                 currency: "INR",
               })} </span>

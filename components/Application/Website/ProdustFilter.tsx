@@ -13,6 +13,7 @@ import { WEBSITE_SHOP } from "@/routes/WebsiteRoutes";
 import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ICategory } from "@/models/category.model";
 const ProdustFilter = () => {
   const { file: categoryResponse } = useFetch({
     url: "/api/category/get-web-category",
@@ -140,7 +141,7 @@ const ProdustFilter = () => {
           <AccordionContent className=" max-h-[200px] top-0 overflow-y-auto flex flex-col gap-4">
             {categoryResponse &&
               categoryResponse.success &&
-              categoryResponse.data.map((item:Record<string,any>,index:any)=>(
+              categoryResponse.data.map((item:ICategory,index:number)=>(
                          <label key={index} className="w-full flex items-center gap-10">
                           <Checkbox checked={categoryArray.includes(item.slug)} onCheckedChange={()=>categoryHandler(item.slug)}/>
                           <div>{item.name}</div> 
@@ -153,7 +154,7 @@ const ProdustFilter = () => {
           <AccordionContent className=" max-h-[200px] top-0 overflow-y-auto flex flex-col gap-4">
             {colorResponse &&
               colorResponse.success &&
-              colorResponse.data.map((item:Record<string,any>,index:any)=>(
+              colorResponse.data.map((item:{color:string},index:number)=>(
                          <label key={index} className="w-full flex items-center gap-10">
                           <Checkbox checked={colorArray.includes(item.color)} onCheckedChange={()=>colorHandler(item.color)}/>
                           <div>{item.color}</div> 
@@ -166,7 +167,7 @@ const ProdustFilter = () => {
           <AccordionContent className=" max-h-[200px] top-0 overflow-y-auto flex flex-col gap-4">
             {sizeResponse &&
               sizeResponse.success &&
-              sizeResponse.data.map((item:Record<string,any>,index:any)=>(
+              sizeResponse.data.map((item:{size:string},index:number)=>(
                          <label key={index} className="w-full flex items-center gap-10">
                           <Checkbox checked={sizeArray.includes(item.size)} onCheckedChange={()=>sizeHandler(item.size)}/>
                           <div>{item.size}</div> 

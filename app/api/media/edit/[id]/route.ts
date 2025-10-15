@@ -4,7 +4,7 @@ import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Media from "@/models/media.model";
 import { NextRequest } from "next/server";
 
-export async function GET(request:NextRequest,{params}:{params:any}) {
+export async function GET(request:NextRequest,{params}:{params:Promise<{id:string}>}) {
     try {
         const{isAuth}=await isAuthenticated({role:"admin"})
 
@@ -29,7 +29,7 @@ export async function GET(request:NextRequest,{params}:{params:any}) {
         return response({success:true,status:200,message:"Media file found successfully",data:media})
         
 
-    } catch (error:any) {
+    } catch (error) {
         return catchError({error:error})
     }
 }

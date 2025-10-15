@@ -37,7 +37,7 @@ export async function PUT(request:NextRequest) {
         
     
     } catch (error) {
-        catchError({error})
+       return catchError({error})
     }
 }
 export async function DELETE(request:NextRequest) {
@@ -68,7 +68,7 @@ export async function DELETE(request:NextRequest) {
         
     
     } catch (error) {
-        catchError({error})
+      return  catchError({error})
     }
 }
 

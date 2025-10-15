@@ -12,16 +12,26 @@ import image_placeholder from "@/public/assets/images/img-placeholder.webp"
 import useFetch from '@/hooks/useFetch'
 import Image from 'next/image'
 import { Rating } from '@mui/material'
+interface ReviewResponse{
+    product:{
+      media:{
+        secure_url:string
+      }[],
+      name:string
+    }
+    rating:number
+}
 const ReviewTavle = () => {
-  const[response,setResponse]=useState<Array<Record<string,any>>>([])
+  const[response,setResponse]=useState<ReviewResponse[]>([])
   const{file}=useFetch({url:"/api/dashboard/admin/get-latest-review"})
-
+  
+  if(file)
+    console.log("this is file data",file.data)
   useEffect(()=>{
      if(file && file.success)
       setResponse(file.data);
   },[file])
 
-  console.log("this is review",response)
 
   return (
       <Table>

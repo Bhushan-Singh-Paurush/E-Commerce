@@ -17,6 +17,8 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
+
+
 const persistorConfig={
   key:"root",
   storage,
@@ -38,7 +40,8 @@ const store=configureStore({
 
 const persistor=persistStore(store)
 
-
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default function Providers({children}:Readonly<{children:React.ReactNode}>){
   const [queryClient] = useState(() => new QueryClient());             

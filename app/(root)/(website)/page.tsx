@@ -6,7 +6,7 @@ import advertising_banner from "@/public/assets/images/advertising-banner.png";
 import Image from "next/image";
 import Review from "@/components/Application/Website/Review";
 import Support from "@/components/Application/Website/Support";
-const page = () => {
+const Page = () => {
   return (
     <div>
       <section>
@@ -40,4 +40,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

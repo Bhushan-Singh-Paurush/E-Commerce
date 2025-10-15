@@ -31,7 +31,7 @@ export async function PUT(request:NextRequest) {
         return response({success:true,status:200,message:"Variant updated successfully"})
         
 
-    } catch (error:any) {
-        catchError({error})
+    } catch (error) {
+      return  catchError({error})
     }
 }

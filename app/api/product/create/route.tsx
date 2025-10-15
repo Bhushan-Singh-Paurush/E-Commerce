@@ -58,7 +58,7 @@ export async function POST(request:NextRequest) {
         return response({success:true,status:200,message:"product created successfully"});
 
 
-       } catch (error:any) {
-            catchError({error})
+       } catch (error) {
+          return  catchError({error})
        }
     }       

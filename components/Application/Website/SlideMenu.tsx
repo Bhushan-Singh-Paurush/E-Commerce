@@ -2,7 +2,7 @@
 import React from 'react'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick"
+import Slider, { CustomArrowProps } from "react-slick"
 import slider1 from "@/public/assets/images/slider-1.png"
 import slider2 from "@/public/assets/images/slider-2.png"
 import slider3 from "@/public/assets/images/slider-3.png"
@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
-function NextArrow(props:any){
+function NextArrow(props:CustomArrowProps){
         const{onClick}=props
     
         return <Button onClick={onClick} variant="secondary" size="icon" className=" absolute right-2 z-10 top-[50%] rounded-full">
@@ -19,7 +19,7 @@ function NextArrow(props:any){
     </Button>
     
     }
-function PrevArrow(props:any){
+function PrevArrow(props:CustomArrowProps){
         const{onClick}=props
     
         return <Button onClick={onClick} variant="secondary" size="icon"className=" absolute top-[50%] z-10 left-2  rounded-full" >

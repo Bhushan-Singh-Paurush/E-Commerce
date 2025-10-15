@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import useFetch from "@/hooks/useFetch";
 import toastFunction from "@/lib/toastFunction";
 import { zSchema } from "@/lib/zodSchema";
-import { ADMIN_CATEGORY, ADMIN_EDIT_CATEGORY } from "@/routes/AdminPanelRoutes";
+import { ADMIN_CATEGORY} from "@/routes/AdminPanelRoutes";
 import { WEBSITE_HOME } from "@/routes/WebsiteRoutes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -25,10 +25,10 @@ import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import z from "zod";
 
-const page = () => {
+const Page = () => {
   const { id } = useParams();
   const [updateLoading, setUpdateLoading] = useState(false);
-  const { loading, file, refetchFunction, error } = useFetch({
+  const { loading, file, error } = useFetch({
     url: `/api/category/edit/${id}`,
   });
   const formSchema = zSchema.pick({
@@ -54,12 +54,17 @@ const page = () => {
         slug: file?.data?.slug,
       });
     }
-  }, [file]);
+  }, [file,form]);
 
   useEffect(() => {
-    const name = form.getValues("name");
-    if (name) form.setValue("slug", slugify(name).toLowerCase());
-  }, [form.watch("name")]);
+    const sub=form.watch((value)=>{
+      const name=value.name
+      if(name)
+        form.setValue("slug", slugify(name).toLowerCase());
+    })
+    
+    return ()=>sub.unsubscribe()
+  }, [form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setUpdateLoading(true);
@@ -76,8 +81,11 @@ const page = () => {
       if (!response.success) throw new Error(response.message);
 
       toastFunction({ type: "success", message: response.message });
-    } catch (error: any) {
+    } catch (error:unknown) {
+      if(error instanceof Error)
       toastFunction({ type: "error", message: error.message });
+      else
+      toastFunction({ type: "error", message: "An unknown error occurred" });  
     } finally {
       setUpdateLoading(false);
     }
@@ -164,4 +172,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

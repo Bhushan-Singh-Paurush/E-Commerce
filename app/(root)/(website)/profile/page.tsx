@@ -27,8 +27,8 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import Dropzone from 'react-dropzone'
-import user_img from "@/public/assets/images/user.png"
+import Dropzone from "react-dropzone";
+import user_img from "@/public/assets/images/user.png";
 import Image from "next/image";
 import { FaCamera } from "react-icons/fa";
 import axios from "axios";
@@ -42,12 +42,12 @@ const breadCrumbData = {
     },
   ],
 };
-function page() {
+function Page() {
   const { file } = useFetch({ url: "/api/user/get-user-details" });
   const [loading, setLoading] = useState(false);
-  const[image,setImage]=useState<File>()
-  const[perview,setPreview]=useState<string>("")
-  const{update}=useSession()
+  const [image, setImage] = useState<File>();
+  const [perview, setPreview] = useState<string>("");
+  const { update } = useSession();
   const formSchema = zSchema.pick({
     name: true,
     phone: true,
@@ -62,11 +62,11 @@ function page() {
       address: "",
     },
   });
-  
-  function fileHandler(acceptedFiles:File[]){
-        const url=URL.createObjectURL(acceptedFiles[0])
-        setPreview(url)
-        setImage(acceptedFiles[0])
+
+  function fileHandler(acceptedFiles: File[]) {
+    const url = URL.createObjectURL(acceptedFiles[0]);
+    setPreview(url);
+    setImage(acceptedFiles[0]);
   }
 
   useEffect(() => {
@@ -76,46 +76,46 @@ function page() {
         address: file?.data?.address || "",
         phone: file?.data?.phone || "",
       });
-      setPreview(file?.data?.avatar?.url)
+      setPreview(file?.data?.avatar?.url);
     }
-  }, [file]);
+  }, [file,form]);
 
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setLoading(true);
+      const formData = new FormData();
 
+      if (image) formData.append("file", image);
 
-  async function onSubmit(values:z.infer<typeof formSchema>) {
-      try {
-        setLoading(true)
-        const formData=new FormData()
-        
-        if(image)
-          formData.append("file",image)
+      formData.append("name", values.name);
+      formData.append("address", values.address);
+      formData.append("phone", values.phone.toString());
 
-          formData.append("name",values.name)
-          formData.append("address",values.address)
-          formData.append("phone",values.phone.toString())
-          
-        
-      const{data:response}=await axios.post("/api/user/update-user",formData)
+      const { data: response } = await axios.post(
+        "/api/user/update-user",
+        formData
+      );
 
-      if(!response.success)
-        throw new Error(response.message);
+      if (!response.success) throw new Error(response.message);
 
-      toastFunction({type:"success",message:response.message})
-      
+      toastFunction({ type: "success", message: response.message });
+
       await update({
-            id:response?.data._id,
-            email:response?.data.email,
-            name:response?.data.name,
-            role:response?.data.role,
-            image:response?.data.avatar.url
-      })
-        
-      } catch (error:any) {
-        toastFunction({type:"error",message:error.message})
-      }finally{
-        setLoading(false)
+        id: response?.data._id,
+        email: response?.data.email,
+        name: response?.data.name,
+        role: response?.data.role,
+        image: response?.data.avatar.url,
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toastFunction({ type: "error", message: error.message });
+      } else {
+        toastFunction({ type: "error", message: "An unknown error occurred" });
       }
-
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <div>
@@ -138,9 +138,15 @@ function page() {
                     <div {...getRootProps()}>
                       <input {...getInputProps()} />
                       <div className=" relative group">
-                        <Image src={perview || user_img} width={100} height={100} className=" w-20 bg-cover bg-center h-20 rounded-full" alt="Image"/>
+                        <Image
+                          src={perview || user_img}
+                          width={100}
+                          height={100}
+                          className=" w-20 bg-cover bg-center h-20 rounded-full"
+                          alt="Image"
+                        />
                         <div className=" transition-all duration-300 text-primary hidden group-hover:flex bg-black/20  z-50 absolute w-20 h-20 border-2 border-primary rounded-full top-0  items-center justify-center">
-                                  <FaCamera/>
+                          <FaCamera />
                         </div>
                       </div>
                     </div>
@@ -213,4 +219,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

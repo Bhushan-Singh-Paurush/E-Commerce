@@ -1,7 +1,7 @@
 import { connection } from "@/lib/DB_Connection";
 import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Variant from "@/models/variant.model";
-import { first } from "ckeditor5";
+
 
 export async function GET(){
     try {
@@ -32,8 +32,8 @@ export async function GET(){
         return response({success:true,status:200,data:sizes})
 
 
-    } catch (error:any) {
+    } catch (error) {
         
-        catchError({error})        
+      return  catchError({error})        
    }
 }

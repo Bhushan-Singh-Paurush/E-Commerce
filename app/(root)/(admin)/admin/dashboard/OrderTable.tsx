@@ -13,7 +13,11 @@ import StatusComp from "@/components/Application/Admin/StatusComp";
 
 const OrderTable = () => {
   const { file } = useFetch({ url: "/api/dashboard/admin/get-latest-order" });
-  const [response, setResponse] = useState<Array<Record<string, any>>>([]);
+  const [response, setResponse] = useState<Array<{order_id:string, 
+                  payment_id:string,
+                  totalItem:number,
+                  status:string,
+                  total:number}>>([]);
   useEffect(() => {
     if (file && file.success) setResponse(file.data);
   }, [file]);
@@ -36,7 +40,7 @@ const OrderTable = () => {
               <TableCell>{item?.payment_id}</TableCell>
               <TableCell>{item?.totalItem}</TableCell>
               <TableCell><StatusComp status={item?.status}/></TableCell>
-              <TableCell>{parseInt(item?.total).toLocaleString("en-IN",{style:"currency",currency:"INR"})}</TableCell>
+              <TableCell>{item?.total.toLocaleString("en-IN",{style:"currency",currency:"INR"})}</TableCell>
             </TableRow>
           ))}
       </TableBody>

@@ -1,3 +1,4 @@
+"use client"
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
@@ -9,7 +10,7 @@ import {
 } from "material-react-table";
 import MenuItem from "@mui/material/MenuItem";
 import Link from "next/link";
-import { deleteMutation } from "@/lib/helperFunction/DeleteMediaFunction";
+import { useDeleteMutation } from "@/lib/helperFunction/DeleteMediaFunction";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -24,19 +25,20 @@ import LoadingGIF from "../LoadingGIF";
 import { Chip } from "@mui/material";
 import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
-const DataTable = ({
+interface DataTableProps<TData extends { _id: string }> {
+  deleteUrl: string;
+  fetchUrl: string;
+  editUrl?: (id: string) => string;
+  queryKey: string;
+  column?: MRT_ColumnDef<TData>[];
+}
+export function DataTable<TData extends { _id: string }>({
   deleteUrl,
   fetchUrl,
   editUrl,
   queryKey,
   column=[]
-}: {
-  deleteUrl: string;
-  fetchUrl: string;
-  editUrl?: Function;
-  queryKey: string;
-  column?:MRT_ColumnDef<any>[]
-}) => {
+}: DataTableProps<TData >){
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
   const [deleteType, setDeleteType] = useState<"SD" | "PD">("SD");
   const pathName = usePathname();
@@ -65,14 +67,14 @@ const DataTable = ({
     },
     queryKey: [queryKey, deleteType],
     initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: () => {
       return undefined;
     },
   });
   
   if(isError)
     console.log(error)
-  const columns = useMemo<MRT_ColumnDef<any>[]>(() => {
+  const columns = useMemo<MRT_ColumnDef<TData>[]>(() => {
     
     if(column.length!==0)
       return column;
@@ -102,9 +104,9 @@ const DataTable = ({
           } : undefined
         };
       });
-  }, [data,column]);
+  }, [data,column,deleteType]);
 
-  const deleteCategory = deleteMutation({ queryKey: queryKey, url: deleteUrl });
+  const deleteCategory = useDeleteMutation({ queryKey: queryKey, url: deleteUrl });
 
   async function deleteHandler({
     deleteType = "SD",
@@ -127,7 +129,7 @@ const DataTable = ({
 
   const handleExportData = () => {
     const fields = Object.keys(rowSelection).length
-      ? data?.pages?.[0].item.filter((cat: Record<string, any>) =>
+      ? data?.pages?.[0].item.filter((cat: {_id:string}) =>
           Object.keys(rowSelection).includes(cat._id)
         )
       : data?.pages?.[0].item;
@@ -156,20 +158,20 @@ const DataTable = ({
     
     renderRowActionMenuItems: ({ row }) => [
       <MenuItem key="edit">
-       { editUrl && <Link href={editUrl(row.original._id)} className=" flex items-center gap-2"><MdOutlineEdit/> Edit</Link>}
+       { editUrl && <Link href={editUrl(String(row.original._id))} className=" flex items-center gap-2"><MdOutlineEdit/> Edit</Link>}
       </MenuItem>,
       <MenuItem
         className=" flex items-center gap-2"
         key="delete"
         onClick={() =>
-          deleteHandler({ deleteType: deleteType, ids: [row.original._id] })
+          deleteHandler({ deleteType: deleteType, ids: [String(row.original._id)] })
         }
       >
         <MdDelete/>
         Delete
       </MenuItem>,
     ],
-    renderTopToolbarCustomActions: ({ table }) => (
+    renderTopToolbarCustomActions: () => (
       <div className=" w-full flex justify-between">
         <Button onClick={handleExportData}>
           <FileDownloadIcon />

@@ -59,7 +59,7 @@ const ReviewAndRating = ({
 
 
       } catch (error) {
-
+        console.log(error)
       }
     })();
   }, [productId]);

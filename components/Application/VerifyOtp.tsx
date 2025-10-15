@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form'
 import z from 'zod'
 import logoBlack from "@/public/assets/images/logo-black.png"
 
-export const  VerifyOtp=({email,onsubmit,loading}:{email:string,onsubmit:Function,loading:boolean}) =>{
+export const  VerifyOtp=({email,onsubmit,loading}:{email:string,onsubmit:({email,otp}:{email:string,otp:string})=>Promise<void>,loading:boolean}) =>{
    
     const formSchema=zSchema.pick({
     otp:true,email:true
@@ -29,8 +29,6 @@ export const  VerifyOtp=({email,onsubmit,loading}:{email:string,onsubmit:Functio
              onsubmit({email:values.email,otp:values.otp}) 
              
    }
-
-  
   
     return (
     <Card>

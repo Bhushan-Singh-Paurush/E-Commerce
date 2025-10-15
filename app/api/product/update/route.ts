@@ -31,8 +31,7 @@ export async function PUT(request:NextRequest) {
         return response({success:true,status:200,message:"Product updated successfully"})
         
 
-    } catch (error:any) {
-        console.log("this is error",error)
-        catchError({error})
+    } catch (error) {
+      return  catchError({error})
     }
 }

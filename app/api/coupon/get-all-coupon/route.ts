@@ -27,7 +27,7 @@ export async function GET(request:NextRequest){
 
          await connection();
         
-        let items=await Coupon.find(filter).sort({createdAt:-1})
+        const items=await Coupon.find(filter).sort({createdAt:-1})
 
         if(items.length===0)
           return response({success:false,status:404,message:"Coupon not found"});
@@ -38,7 +38,7 @@ export async function GET(request:NextRequest){
              return response({success:true,status:200,message:"all categories",data:{items,noOfRows:numberOfProduct}});
 
     } catch (error) {
-        console.log(error)
-        catchError({error})
+       
+       return catchError({error})
     }
 }

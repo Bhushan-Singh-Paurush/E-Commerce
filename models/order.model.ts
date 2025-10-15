@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Product from "./product.model";
 
-interface IOrder {
+export interface IOrder {
   name: string;
   email: string;
   phone: number;

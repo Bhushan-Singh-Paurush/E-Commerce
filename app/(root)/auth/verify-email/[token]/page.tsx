@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { WEBSITE_HOME } from '@/routes/WebsiteRoutes';
 
-function page() {
+function Page() {
     const {token}=useParams<{token:string}>();
     const[isVerify,setIsVerify]=useState(false)
 
@@ -57,4 +57,4 @@ function page() {
   )
 }
 
-export default page
+export default Page

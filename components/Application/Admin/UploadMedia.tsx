@@ -4,17 +4,37 @@ import toastFunction from "@/lib/toastFunction";
 import axios from "axios";
 import {CldUploadWidget} from "next-cloudinary"
 import { FiPlus } from "react-icons/fi";
+import type { CloudinaryUploadWidgetResults } from 'next-cloudinary';
+// Minimal fields you care about
+export interface UploadInfo {
+  asset_id: string;
+  public_id: string;
+  path?: string;
+  thumbnail_url?: string;
+  secure_url: string;
+}
+
+// Each file returned by Cloudinary
+interface UploadedFile {
+  uploadInfo: UploadInfo;
+  [key: string]: unknown; // extra fields
+}
 
 const UploadMedia=({isMulti=true}:{isMulti:boolean})=>{
 
-function handleError(error:any){
-    toastFunction({type:"error",message:error.statusText})
+function handleError(error:unknown){
+     if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+
           
 }
 
-async function handleQueuesEnd(result:any){
-       const file=result.data.info.files
-       const data = file.map((file:Record<string,any>)=>file.uploadInfo).map((uploadInfo:Record<string,any>)=>(
+async function handleQueuesEnd(result:CloudinaryUploadWidgetResults){
+       const files=Array.isArray(result.info) ? result.info : []
+       const data = files.map((file:UploadedFile)=>file.uploadInfo).map((uploadInfo:UploadInfo)=>(
         {
             asset_id:uploadInfo.asset_id,
             public_id:uploadInfo.public_id,

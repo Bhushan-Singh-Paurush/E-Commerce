@@ -1,16 +1,17 @@
 "use client"
 import toastFunction from '@/lib/toastFunction'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import Image from 'next/image'
 import React, { useState } from 'react'
 import MediaItem from './MediaItem'
-import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
-import { deleteMutation } from '../../../lib/helperFunction/DeleteMediaFunction'
+import { useDeleteMutation } from '../../../lib/helperFunction/DeleteMediaFunction'
 import LoadingGIF from '../LoadingGIF'
-
+interface IMedia{
+    secure_url:string
+    _id:string
+}
 const MediaData = ({deleteType}:{deleteType:string}) => {
   const[selected,setSelected]=useState(Array<string>) 
   const[isChecked,setIsChecked]=useState(false)
@@ -47,7 +48,7 @@ const MediaData = ({deleteType}:{deleteType:string}) => {
 
   function handleCheck(){
       if(isChecked!==true){
-       setSelected(data?.pages?.flatMap((page)=>(page.mediaData.map((file:Record<string,any>)=>(file._id)))) ?? [])
+       setSelected(data?.pages?.flatMap((page)=>(page.mediaData.map((file:{_id:string})=>(file._id)))) ?? [])
        setIsChecked(true)
       }else{
         setSelected([])
@@ -55,7 +56,7 @@ const MediaData = ({deleteType}:{deleteType:string}) => {
       }
   }
 
-const deleteMedia=deleteMutation({queryKey:"media-data",url:"/api/media/deleteMedia"})
+const deleteMedia=useDeleteMutation({queryKey:"media-data",url:"/api/media/deleteMedia"})
   
 function handleDelete({ids,deleteType}:{ids:Array<string>,deleteType:string}){
   deleteMedia.mutate({ids:ids,deleteType:deleteType})
@@ -114,7 +115,7 @@ function handleDelete({ids,deleteType}:{ids:Array<string>,deleteType:string}){
       
       {data?.pages.map((page,index)=>(
         <div className=' w-full gap-4 grid grid-cols-2 lg:grid-cols-5 sm:grid-cols-3' key={index}>
-          {page?.mediaData?.map((file:Record<string,any>)=>(
+          {page?.mediaData?.map((file:IMedia)=>(
             <div  key={file._id}>
                   <MediaItem file={file} selected={selected} setSelected={setSelected} handleDelete={handleDelete} deleteType={deleteType}/>
             </div>

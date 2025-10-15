@@ -15,7 +15,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import ProductBox from "@/components/Application/Website/ProductBox";
+import ProductBox, { ProductBoxProps } from "@/components/Application/Website/ProductBox";
 import LoadingBtn from "@/components/Application/LoadingBtn";
 import LoadingGIF from "@/components/Application/LoadingGIF";
 export interface IbreadCrumb {
@@ -34,7 +34,7 @@ const breadCrumbData: IbreadCrumb = {
 };
 
 
-const page = () => {
+const Page = () => {
   const [limit, setLimit] = useState<number>(9);
   const [sorting, setSorting] = useState<string>("default");
   const [isMobileView, setIsMobileView] = useState(false);
@@ -96,7 +96,7 @@ const page = () => {
 
           <div className=" w-full grid grid-cols-2 md:grid-cols-3  lg:gap-10 gap-5">
             {status==="pending" ? <div><LoadingGIF/></div> : status==="error" ? <div>{error.message}</div> : data && data.pages.map((page)=>(
-                    page.productData.map((product:Record<string,any>,index:any)=>(
+                    page.productData.map((product:ProductBoxProps,index:number)=>(
                       <ProductBox product={product} key={index}/>
                     ))
             ))}
@@ -111,4 +111,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

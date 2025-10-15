@@ -4,7 +4,7 @@ import { nextOptions } from "../authOptions";
 export async function isAuthenticated({role}:{role:string}){
        try {
            const session=await getServerSession(nextOptions)
-           console.log(session)
+
            if(!session)
             return {
                 isAuth:false

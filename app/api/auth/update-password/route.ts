@@ -26,12 +26,14 @@ export async function POST(request:NextRequest){
 
         user.password=password
 
-        await user.save()
-            return response({success:true,status:200,message:"Password updated successfully"})
+        await user.save();
+
+            
+        return response({success:true,status:200,message:"Password updated successfully"})
 
 
     } catch (error) {
-        catchError({error})
+        return catchError({error})
     }
 
 }

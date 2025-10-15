@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-interface ICategory{
+export interface ICategory{
     name:string,
     slug:string,
     deletedAt:Date

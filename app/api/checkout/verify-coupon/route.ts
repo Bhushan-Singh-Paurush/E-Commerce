@@ -54,8 +54,7 @@ export async function POST(request: NextRequest) {
       message: "Coupon added successfully",
       data: coupon,
     });
-  } catch (error: any) {
-    console.log(error);
-    catchError({ error });
+  } catch (error) {
+    return catchError({ error });
   }
 }

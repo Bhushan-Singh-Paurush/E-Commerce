@@ -124,7 +124,7 @@ export const nextOptions: NextAuthOptions = {
       }
 
       if (trigger === "update" && session) {
-         console.log("inside the trigger")
+
         token.id = session.id ?? token.id;
         token.name = session.name ?? token.name;
         token.email = session.email ?? token.email;

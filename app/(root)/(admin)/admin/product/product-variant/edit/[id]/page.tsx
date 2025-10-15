@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import MediaModal from "@/components/Application/Admin/MediaModal";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { ClassicEditor } from "ckeditor5";
 
 
 type Option = {
@@ -54,7 +55,7 @@ const EditProduct = () => {
 
   useEffect(() => {
     if (productResponse && productResponse.success) {
-      const options = productResponse.data.items.map((product: Record<string, any>) => ({
+      const options = productResponse.data.items.map((product: {productName:string,_id:string}) => ({
         label: product.productName,
         value: product._id,
       }));
@@ -106,7 +107,7 @@ const EditProduct = () => {
   
   function isUpdated(){
     const values=form.getValues();
-    const dbMedia= JSON.stringify(variantResponse.data.media.map((ele:Record<string,any>)=>{
+    const dbMedia= JSON.stringify(variantResponse.data.media.map((ele:{_id:string,secure_url:string})=>{
       return {
              _id:ele._id,
              secure_url:ele.secure_url
@@ -150,33 +151,39 @@ const EditProduct = () => {
       return toastFunction({type:"error",message:"No Change Found"})
     }
     
-    catch (error: any) {
-      console.log("this is error",error)
-      console.log(error);
-      toastFunction({ type: "error", message: error.message });
-    } finally {
+   catch (error: unknown) {
+  if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+}
+ finally {
       setLoading(false);
     }
   }
 
   
   useEffect(()=>{
-    const mrp=Number(form.getValues("mrp"))
-    const sellingPrice=Number(form.getValues("sellingPrice"))
+    const subscription=form.watch((value)=>{
+    const mrp=Number(value.mrp)
+    const sellingPrice=Number(value.sellingPrice)
    if(mrp>0 && sellingPrice>0)
    {
         form.setValue("discount",Math.round(((mrp-sellingPrice)/mrp)*100))
    }
-  },[form.watch("mrp"),form.watch("sellingPrice")])
+   })
+   return ()=>subscription.unsubscribe()
+  },[form])
   
-  function editor(event: any, editor: any) {
+  function editor(event: unknown, editor: ClassicEditor) {
     const data = editor.getData();
     form.setValue("description", data);
   }
 
   useEffect(()=>{
     if(variantResponse && variantResponse.success){
-      const selectedOption=variantResponse?.data?.media.map((item:Record<string,any>)=>{
+      const selectedOption=variantResponse?.data?.media.map((item:{_id:string,secure_url:string})=>{
         return {
               _id:item._id,
               secure_url:item.secure_url 
@@ -196,7 +203,7 @@ const EditProduct = () => {
           size:variantResponse.data.size
        })
     }
-  },[variantResponse])
+  },[variantResponse,form])
 
   const sizeValue=[
     {label:"S",value:"S"},

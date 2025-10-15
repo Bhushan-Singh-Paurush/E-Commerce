@@ -27,7 +27,7 @@ import toastFunction from '@/lib/toastFunction'
 import { useRouter } from 'next/navigation'
 import { ADMIN_DASHBOARD } from '@/routes/AdminPanelRoutes'
 import { USER_DASHBOARD } from '@/routes/UserRoutes'
-const page = () => {
+const Page = () => {
   const[loading,setLoading]=useState(false)
   const[isPasswordType,setIsPasswordType]=useState(true)
   const route=useRouter()
@@ -147,4 +147,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

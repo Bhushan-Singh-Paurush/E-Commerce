@@ -1,6 +1,7 @@
 import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Category from "@/models/category.model";
 import Product from "@/models/product.model";
+import { FilterQuery } from "mongoose";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest) {
       .lean();
 
       
-      let matchQuery:any={}
+      const matchQuery:FilterQuery<typeof Product>={}
       
       if(categoryIds.length>0)
       {
@@ -129,12 +130,12 @@ export async function GET(request: NextRequest) {
     let hasMore=null  
     if(productData.length>limit)
     {
-        hasMore=page+1,
-        productData.pop() 
+        hasMore=page+1;
+        productData.pop(); 
     }
     
       return response({success:true,status:200,data:{productData,hasMore}})  
-  } catch (error:any) {
-    catchError({error})
+  } catch (error) {
+   return catchError({error})
   }
 }

@@ -2,7 +2,7 @@ import toastFunction from "@/lib/toastFunction";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
-export function deleteMutation({queryKey,url}:{queryKey:string,url:string}) {
+export function useDeleteMutation({queryKey,url}:{queryKey:string,url:string}) {
        const queryClient=useQueryClient()
   return useMutation({
         mutationFn:async({ids,deleteType}:{ids:Array<string>,deleteType:string})=>{

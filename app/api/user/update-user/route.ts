@@ -1,9 +1,10 @@
+import cloudinary from "@/lib/cloudinary";
 import { isAuthenticated } from "@/lib/helperFunction/isAuthenticated";
 import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import { zSchema } from "@/lib/zodSchema";
 import User from "@/models/user.model";
 import { NextRequest } from "next/server";
-import { cloudinary } from "../../sign-cloudinary-params/route";
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,8 +71,8 @@ export async function POST(request: NextRequest) {
             try {
               await cloudinary.uploader.destroy(user?.avatar?.public_id);
             } catch (error) {
-              console.log("failed to delete the cloud file", error);
-              return;
+              return catchError({error})
+              
             }
           } 
             user.avatar.url = uploadResponse.secure_url
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
           
         }
       } catch (error) {
-        console.log("failed to upload cloud file", error);
+            return catchError({error})
       }
     }
 
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     return response({ success: true, status: 200, message: "Profile Updated",data:user });
   
-} catch (error:any) {
-    catchError({error})
+} catch (error) {
+   return catchError({error})
 }
 }

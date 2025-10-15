@@ -17,7 +17,7 @@ export async function GET() {
 
       return response({success:true,status:200,data:reviews});
 
-  } catch (error:any) {
-    catchError({error})
+  } catch (error) {
+    return catchError({error})
   }
 }

@@ -3,12 +3,12 @@ import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Review from "@/models/review.model";
 import { NextRequest } from "next/server";
 import { ObjectId } from "mongodb";
-export async function GET(request:NextRequest,{params}:{params:any})
+export async function GET(request:NextRequest,{params}:{params:Promise<{id:string}>})
 {
      try {
         const searchParams=request.nextUrl.searchParams
         const getParams=await params
-        const product:string=getParams.id
+        const product=getParams.id
       
         if(!product)
          return response({success:false,status:400,message:"product id not found"})
@@ -59,8 +59,8 @@ export async function GET(request:NextRequest,{params}:{params:any})
         
        let hasMore=false 
        if(allReviews.length>limit){
-          hasMore=true,
-          allReviews.pop()  
+          hasMore=true;
+          allReviews.pop(); 
        }
 
 
@@ -69,8 +69,8 @@ export async function GET(request:NextRequest,{params}:{params:any})
          hasMore
         }})
 
-     } catch (error:any) {
+     } catch (error) {
       
-        catchError({error})
+      return  catchError({error})
      }
 }

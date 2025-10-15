@@ -3,9 +3,19 @@ import { WEBSITE_ORDER_DETAIL } from "@/routes/WebsiteRoutes";
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-
-const UserOrderTable = ({ limit, email }: { limit?: number; email?: string }) => {
-  const [orders, setOrders] = useState<Array<Record<string, any>>>([]);
+interface OrderResponse {
+  order_id: string;
+  total: number;
+  items: number;
+}
+const UserOrderTable = ({
+  limit,
+  email,
+}: {
+  limit?: number;
+  email?: string;
+}) => {
+  const [orders, setOrders] = useState<OrderResponse[]>([]);
 
   useEffect(() => {
     async function fetchOrders() {
@@ -17,18 +27,22 @@ const UserOrderTable = ({ limit, email }: { limit?: number; email?: string }) =>
         if (!response.success) throw new Error(response.message);
 
         setOrders(response.data);
-      } catch (error: any) {
-        toastFunction({ type: "error", message: error.message });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toastFunction({ type: "error", message: error.message });
+        } else {
+          toastFunction({
+            type: "error",
+            message: "An unknown error occurred",
+          });
+        }
       }
     }
 
     if (email) fetchOrders();
-  }, [email]);
-
-  console.log(orders);
+  }, [email, limit]);
 
   return (
-    
     <table className=" max-h-screen overflow-auto text-muted-foreground border-separate border-spacing-y-2">
       <thead>
         <tr>
@@ -48,11 +62,16 @@ const UserOrderTable = ({ limit, email }: { limit?: number; email?: string }) =>
                   href={WEBSITE_ORDER_DETAIL(order?.order_id)}
                   className=" underline hover:text-primary transition-all duration-200"
                 >
-                    {order?.order_id}
+                  {order?.order_id}
                 </Link>
               </td>
               <td>{order?.items}</td>
-              <td>{parseInt(order?.total).toLocaleString("en-IN",{style:"currency",currency:"INR"})}</td>
+              <td>
+                {order?.total.toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                })}
+              </td>
             </tr>
           ))}
       </tbody>

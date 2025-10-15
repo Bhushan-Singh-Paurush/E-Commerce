@@ -1,12 +1,11 @@
 "use client"
 import { BreadCrumbFunction } from "@/components/Application/Admin/BreadCrumbFunction";
 import DataTable from "@/components/Application/Admin/DataTable";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ADMIN_EDIT_CATEGORY, ADMIN_EDIT_ORDER, ADMIN_ORDERS } from "@/routes/AdminPanelRoutes";
+import { ADMIN_EDIT_ORDER, ADMIN_ORDERS } from "@/routes/AdminPanelRoutes";
 import { WEBSITE_HOME } from "@/routes/WebsiteRoutes";
 import React from "react";
-const page = () => {
+const Page = () => {
    const data=[
       {
         page:"Home",
@@ -36,4 +35,4 @@ const page = () => {
     </div>
   );
 };
-export default page;
+export default Page;

@@ -313,7 +313,7 @@ export default function Editor({ onChange, initialData }: EditorProps) {
         }
       }
     }
-  }, [isLayoutReady])
+  }, [isLayoutReady,initialData])
 
   return (
     <div className=' w-[100%] overflow-x-hidden'>

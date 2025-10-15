@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Category from "./category.model";
 import Media from "./media.model";
-interface IProduct{
+export interface IProduct{
     name:string,
     slug:string,
     mrp:number,

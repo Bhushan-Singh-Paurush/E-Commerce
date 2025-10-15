@@ -18,8 +18,7 @@ export async function GET(){
 
         return response({success:true,status:200,data:category})
     
-    } catch (error:any) {
-        console.log(error)
-        catchError({error})
+    } catch (error) {
+        return catchError({error})
     }
 }

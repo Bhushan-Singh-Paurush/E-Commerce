@@ -16,34 +16,39 @@ import {
 import toastFunction from "@/lib/toastFunction";
 import { useParams } from "next/navigation";
 import LoadingBtn from "@/components/Application/LoadingBtn";
-
+import { IOrder } from "@/models/order.model";
+interface OrderResponse {
+  success: string;
+  message: string;
+  data: IOrder;
+}
 const OrderDetails = () => {
   const getParams = useParams();
-  const order_id=getParams.orderId
+  const order_id = getParams.orderId;
   const [status, setStatus] = useState<string>("");
-  const [response, setResponse] = useState<Record<string, any>>({});
+  const [response, setResponse] = useState<OrderResponse | null>(null);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     (async () => {
       try {
-        const { data: result } = await axios.get(
-          `/api/order/get/${order_id}`
-        );
-        if (!result.success) throw new Error(response.message);
+        const { data: result } = await axios.get(`/api/order/get/${order_id}`);
+        if (!result.success) throw new Error(result.message);
 
         setResponse(result);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, []);
+  }, [order_id]);
 
   async function statusHandler() {
     if (!status) toastFunction({ type: "error", message: "No change found" });
     try {
       setLoading(true);
       const { data: response } = await axios.put("/api/order/update", {
-        status,order_id
+        status,
+        order_id,
       });
 
       if (!response.success) throw new Error(response.message);
@@ -51,13 +56,17 @@ const OrderDetails = () => {
       toastFunction({ type: "success", message: response.message });
 
       response.data.status = status;
-    } catch (error: any) {
-      toastFunction({ type: "error", message: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toastFunction({ type: "error", message: error.message });
+      } else {
+        toastFunction({ type: "error", message: "An unknown error occurred" });
+      }
     } finally {
       setLoading(false);
     }
   }
-  if (Object.keys(response).length===0)
+  if (response && !response.success)
     return (
       <div className=" w-full h-screen flex items-center justify-center">
         Order Detail not found
@@ -74,7 +83,7 @@ const OrderDetails = () => {
           </CardHeader>
           <CardContent>
             {" "}
-            {response.success && (
+            {response && response.success && (
               <section>
                 <div className="flex flex-col gap-8">
                   {/* order */}
@@ -102,8 +111,8 @@ const OrderDetails = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {response?.data?.products?.map(
-                        (product: Record<string, any>, index: any) => (
+                      {response.data.products.map(
+                        (product, index: number) => (
                           <tr key={index}>
                             <td className=" flex items-center gap-2 pl-2">
                               <Image
@@ -127,7 +136,7 @@ const OrderDetails = () => {
                               </div>
                             </td>
                             <td>
-                              {parseInt(product?.sellingPrice).toLocaleString(
+                              {product?.sellingPrice.toLocaleString(
                                 "en-IN",
                                 {
                                   style: "currency",
@@ -209,39 +218,40 @@ const OrderDetails = () => {
                         <tr>
                           <td className=" font-semibold">SubTotal</td>
                           <td>
-                            {parseInt(response?.data?.subTotal).toLocaleString(
-                              "en-IN",
-                              { style: "currency", currency: "INR" }
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className=" font-semibold">Discount</td>
-                          <td>
-                            {parseInt(response?.data?.discount).toLocaleString(
-                              "en-IN",
-                              { style: "currency", currency: "INR" }
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className=" font-semibold">Coupon Discount</td>
-                          <td>
-                            {parseInt(
-                              response?.data?.couponDiscount
-                            ).toLocaleString("en-IN", {
+                            {response?.data?.subTotal.toLocaleString("en-IN", {
                               style: "currency",
                               currency: "INR",
                             })}
                           </td>
                         </tr>
                         <tr>
+                          <td className=" font-semibold">Discount</td>
+                          <td>
+                            {response?.data?.discount.toLocaleString("en-IN", {
+                              style: "currency",
+                              currency: "INR",
+                            })}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className=" font-semibold">Coupon Discount</td>
+                          <td>
+                            {response?.data?.couponDiscount.toLocaleString(
+                              "en-IN",
+                              {
+                                style: "currency",
+                                currency: "INR",
+                              }
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
                           <td className=" font-semibold">Total</td>
                           <td>
-                            {parseInt(response?.data?.total).toLocaleString(
-                              "en-IN",
-                              { style: "currency", currency: "INR" }
-                            )}
+                            {response?.data?.total.toLocaleString("en-IN", {
+                              style: "currency",
+                              currency: "INR",
+                            })}
                           </td>
                         </tr>
 

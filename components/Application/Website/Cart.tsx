@@ -8,29 +8,30 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { removeProduct } from "@/slices/cart";
 import Link from "next/link";
 import { WEBSITE_CART, WEBSITE_CHECKOUT } from "@/routes/WebsiteRoutes";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { Product } from "@/app/api/checkout/verify-cart/route";
 const Cart = () => {
-  const cart = useSelector((state: any) => state.cart);
-  const dispatch = useDispatch();
+  const cart = useAppSelector((state) => state.cart);
+  const dispatch = useAppDispatch();
   const [subTotal, setSubTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   useEffect(() => {
     if (cart.products.length > 0) {
       const totalPrice = cart.products.reduce(
-        (acc: number, product: Record<string, any>) =>
+        (acc: number, product:{sellingPrice:number}) =>
           acc + product.sellingPrice,
         0
       );
       setSubTotal(totalPrice);
 
       const totalDiscount = cart.products.reduce(
-        (acc: number, product: Record<string, any>) =>
+        (acc: number, product:{mrp:number,sellingPrice:number}) =>
           acc + (product.mrp - product.sellingPrice),
         0
       );
@@ -65,7 +66,7 @@ const Cart = () => {
             {cart && cart.products.length === 0 ? (
               <div className=" w-full text-center">Your Cart Was Empty</div>
             ) : (
-              cart.products.map((item: Record<string, any>, index: any) => (
+              cart.products.map((item: Product, index: number) => (
                 <div
                   key={index}
                   className=" flex items-center justify-between p-2 border-b-[1px] border-border"
@@ -104,7 +105,7 @@ const Cart = () => {
                       <span>{item.qty} </span>X
                       <span>
                         {" "}
-                        {parseInt(item.sellingPrice).toLocaleString("en-IN", {
+                        {item.sellingPrice.toLocaleString("en-IN", {
                           style: "currency",
                           currency: "INR",
                         })}

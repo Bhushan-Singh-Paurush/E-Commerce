@@ -3,7 +3,8 @@ import { isAuthenticated } from "@/lib/helperFunction/isAuthenticated";
 import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Media from "@/models/media.model";
 import { NextRequest } from "next/server";
-import { cloudinary } from "../../sign-cloudinary-params/route";
+import { UploadInfo } from "@/components/Application/Admin/UploadMedia";
+import cloudinary from "@/lib/cloudinary";
 
 
 
@@ -35,13 +36,10 @@ export async function POST(request:NextRequest) {
 
         if(payload && payload.length>0)
         {
-            const public_ids=payload.map((item:Record<string,any>)=>item.public_id)
+            const public_ids=payload.map((item:UploadInfo)=>item.public_id)
 
-            try {
-                await cloudinary.api.delete_resources(public_ids)
-            } catch (delteError) {
-                (error as any).cloudinary=delteError
-            }
+            await cloudinary.api.delete_resources(public_ids)
+           
         }
         return catchError({error})
     }

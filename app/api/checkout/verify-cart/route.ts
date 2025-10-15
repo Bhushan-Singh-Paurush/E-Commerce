@@ -2,7 +2,18 @@ import { connection } from "@/lib/DB_Connection";
 import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Variant from "@/models/variant.model";
 import { NextRequest } from "next/server";
-
+export interface Product{
+        productId:string,
+        variantId:string,
+        mrp:number,
+        sellingPrice:number,
+        size:number,
+        color:string,
+        qty:number,
+        picture:string,
+        name:string,
+        slug:string
+}
 export async function POST(request: NextRequest) {
   try {
     const products = await request.json();
@@ -17,7 +28,7 @@ export async function POST(request: NextRequest) {
     await connection()
 
     const cartData = await Promise.all(
-      products.map(async (product: Record<string, any>) => {
+      products.map(async (product: Product) => {
         try {
           
         const variant = await Variant.findOne({
@@ -44,8 +55,8 @@ export async function POST(request: NextRequest) {
         }  
         
         
-        } catch (error:any) {
-            catchError({error})
+        } catch (error) {
+           return  catchError({error})
         }
       })
 
@@ -54,7 +65,7 @@ export async function POST(request: NextRequest) {
     return response({success:true,status:200,data:cartData})
 
 
-  } catch (error:any) {
+  } catch (error) {
     console.log(error)
     return catchError({error})
   }

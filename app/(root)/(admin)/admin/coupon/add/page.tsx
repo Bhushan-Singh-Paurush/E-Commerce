@@ -14,7 +14,7 @@ import z from 'zod'
 import axios from 'axios'
 import toastFunction from '@/lib/toastFunction'
 
-const page = () => {
+const Page = () => {
   const[loading,setLoading]=useState(false)  
   const data=[
     {
@@ -56,8 +56,11 @@ const page = () => {
               else
                 toastFunction({type:"success",message:response.message})
                 
-          } catch (error:any) {
-               toastFunction({type:"error",message:error.message}) 
+          } catch (error:unknown) {
+               if(error instanceof Error)
+               toastFunction({type:"error",message:error.message});
+              else
+               toastFunction({type:"error",message:"An unknown error occurred"});  
           }finally{
               setLoading(false)
           }
@@ -160,4 +163,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

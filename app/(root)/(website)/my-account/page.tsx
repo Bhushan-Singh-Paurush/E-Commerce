@@ -3,13 +3,14 @@ import UserOrderTable from "@/components/Application/Website/UserOrderTable";
 import WebsiteBreadCrumb from "@/components/Application/Website/WebsiteBreadCrumb";
 import WebsiteLayout from "@/components/Application/Website/WebsiteLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAppSelector } from "@/hooks/reduxHooks";
 import { USER_DASHBOARD } from "@/routes/UserRoutes";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { IoCartOutline } from "react-icons/io5";
-import { useSelector } from "react-redux";
+
 
 const breadCrumbData = {
   title: "Order Detail",
@@ -20,8 +21,8 @@ const breadCrumbData = {
     },
   ],
 };
-const page = () => {
-  const cartData=useSelector((state:any)=>state.cart)
+const Page = () => {
+  const cartData=useAppSelector((state)=>state.cart)
   const{data:Session}=useSession()
   const[count,setCount]=useState(0)
   
@@ -37,7 +38,7 @@ const page = () => {
         setCount(response.data.count)
           
       } catch (error) {
-        
+        console.log(error)
       }
     }
 
@@ -96,4 +97,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

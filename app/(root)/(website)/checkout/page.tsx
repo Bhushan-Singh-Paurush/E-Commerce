@@ -21,7 +21,6 @@ import {
   WEBSITE_CHECKOUT,
   WEBSITE_PRODUCT_DETAILS,
 } from "@/routes/WebsiteRoutes";
-import { useDispatch, useSelector } from "react-redux";
 import useFetch from "@/hooks/useFetch";
 import image_placeholder from "@/public/assets/images/img-placeholder.webp";
 import Image from "next/image";
@@ -33,6 +32,9 @@ import LoadingBtn from "@/components/Application/LoadingBtn";
 import { clearCart } from "@/slices/cart";
 import { useRouter } from "next/navigation";
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { Product } from "@/app/api/checkout/verify-cart/route";
+import Script from "next/script";
 const breadCrumbData = {
   title: "Checkout",
   data: [
@@ -42,10 +44,10 @@ const breadCrumbData = {
     },
   ],
 };
-const page = () => {
+const Page = () => {
   const { data: Session } = useSession();
-  const cart = useSelector((state: any) => state.cart);
-  const [cartData, setCartData] = useState<Array<Record<string, any>>>([]);
+  const cart = useAppSelector((state) => state.cart);
+  const [cartData, setCartData] = useState<Product[]>([]);
   const [subTotal, setSubTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [couponDiscount, setCouponDiscount] = useState(0);
@@ -56,7 +58,7 @@ const page = () => {
   const route = useRouter();
   const { Razorpay } = useRazorpay();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { file } = useFetch({
     url: "/api/checkout/verify-cart",
     method: "POST",
@@ -67,32 +69,7 @@ const page = () => {
     if (file && file.success) setCartData(file.data);
   }, [file]);
 
-  useEffect(() => {
-    if (cartData.length > 0) {
-      const totalPrice = cartData.reduce(
-        (acc: number, product: Record<string, any>) =>
-          acc + product.sellingPrice,
-        0
-      );
-      setSubTotal(totalPrice);
-      setTotal(totalPrice);
-      couponForm.setValue("minShopingAmount", totalPrice);
-
-      const totalDiscount = cartData.reduce(
-        (acc: number, product: Record<string, any>) =>
-          acc + (product.mrp - product.sellingPrice),
-        0
-      );
-
-      setDiscount(totalDiscount);
-    } else {
-      setSubTotal(0);
-      setDiscount(0);
-      setTotal(0);
-      couponForm.setValue("minShopingAmount", 0);
-    }
-  }, [cartData]);
-
+  
   const shippingFormSchema = zSchema.pick({
     name: true,
     email: true,
@@ -117,7 +94,7 @@ const page = () => {
       minShopingAmount: "",
     },
   });
-
+  
   const shippingForm = useForm<z.infer<typeof shippingFormSchema>>({
     resolver: zodResolver(shippingFormSchema),
     defaultValues: {
@@ -132,12 +109,38 @@ const page = () => {
       orderNote: "",
     },
   });
-
+  
   useEffect(() => {
     if (Session?.user)
       shippingForm.setValue("email", Session?.user.email || "");
     shippingForm.setValue("name", Session?.user.name || "");
-  }, [Session]);
+  }, [Session,shippingForm]);
+  
+  useEffect(() => {
+    if (cartData.length > 0) {
+      const totalPrice = cartData.reduce(
+        (acc: number, product: {sellingPrice:number}) =>
+          acc + product.sellingPrice,
+        0
+      );
+      setSubTotal(totalPrice);
+      setTotal(totalPrice);
+      couponForm.setValue("minShopingAmount", totalPrice);
+
+      const totalDiscount = cartData.reduce(
+        (acc: number, product: {mrp:number,sellingPrice:number}) =>
+          acc + (product.mrp - product.sellingPrice),
+        0
+      );
+
+      setDiscount(totalDiscount);
+    } else {
+      setSubTotal(0);
+      setDiscount(0);
+      setTotal(0);
+      couponForm.setValue("minShopingAmount", 0);
+    }
+  }, [cartData,couponForm]);
 
   async function shippingSubmit(values: z.infer<typeof shippingFormSchema>) {
     try {
@@ -156,7 +159,7 @@ const page = () => {
         name: "E commers",
         description: "Test Transaction",
         order_id: orderResponse.data.id,
-        handler: async function (response: Record<string, any>) {
+        handler: async function (response: {razorpay_payment_id:string,razorpay_order_id:string,razorpay_signature:string}) {
           try {
             const { data: verificationResponse } = await axios.post(
               "/api/checkout/verify-payment",
@@ -170,7 +173,6 @@ const page = () => {
             if (!verificationResponse.success)
               throw new Error(verificationResponse.message);
 
-            console.log("this is ",verificationResponse)
 
             const { data: generateOrder } = await axios.post(
               "/api/order/create",
@@ -193,9 +195,14 @@ const page = () => {
             dispatch(clearCart());
 
             route.push(`/order-details/${generateOrder.data}`);
-          } catch (error: any) {
-            toastFunction({ type: "error", message: error.message });
-          }
+          }catch (error: unknown) {
+  if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+}
+
         },
         prefill: {
           name: shippingForm.getValues("name"),
@@ -215,13 +222,18 @@ const page = () => {
       
       razorpayInstance.open()
 
-    } catch (error) {
-      console.log(error);
-    } finally {
+    }catch (error: unknown) {
+  if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+}
+ finally {
       setLoading(false);
     }
   }
-  console.log(shippingForm.formState.errors);
+
   async function CouponSubmit(values: z.infer<typeof couponSchema>) {
     setCouponLoading(true)
     try {
@@ -241,14 +253,19 @@ const page = () => {
       setIsCouponApplied(true);
 
       toastFunction({ type: "success", message: response.message });
-    } catch (error: any) {
-      toastFunction({ type: "error", message: error.message });
-    }finally{
+    } catch (error: unknown) {
+  if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+}
+finally{
     setCouponLoading(false)
   }
   }
 
-  console.log("redander")
+
 
   return (
     <div>
@@ -534,14 +551,14 @@ const page = () => {
               <div>
                 <p className=" text-xs text-muted-foreground">Coupon : </p>
                 <h4 className=" font-semibold">
-                  {couponForm.getValues("code")}
+                  {couponForm.getValues("code").toString()}
                 </h4>
               </div>
               <Button
                 variant="destructive"
                 onClick={() => {
-                  setCouponDiscount(0),
-                    setTotal(subTotal),
+                  setCouponDiscount(0);
+                    setTotal(subTotal);
                     setIsCouponApplied(false);
                 }}
               >
@@ -551,9 +568,12 @@ const page = () => {
           )}
         </section>
       </div>
-      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+     <Script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        strategy="afterInteractive"
+      />
     </div>
   );
 };
 
-export default page;
+export default Page;

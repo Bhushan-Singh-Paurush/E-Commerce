@@ -33,11 +33,19 @@ const chartConfig = {
     color: "#8e51ff",
   },
 } satisfies ChartConfig;
-
+interface IOrderData {
+  _id: {
+    year: number;
+    month: number;
+  };
+  count: number;
+}
 export function OrderBarChart() {
-  const [response, setResponse] = useState<Array<Record<string, any>>>([]);
+  const [response, setResponse] = useState<Array<IOrderData>>([]);
   const { file } = useFetch({ url: "/api/dashboard/admin/get-order-data" });
-  const [chartData, setChartData] = useState<Array<Record<string, any>>>([]);
+  const [chartData, setChartData] = useState<
+    Array<{ month: string; orders: number }>
+  >([]);
 
   useEffect(() => {
     if (file && file.success) setResponse(file.data);
@@ -51,31 +59,27 @@ export function OrderBarChart() {
         (order) => order._id.year === year
       );
 
-      const orders = monthData.flatMap((month,index)=>{
-          const data=currentYearData.filter((order)=>order._id.month==index+1)
+      const orders = monthData.flatMap((month, index) => {
+        const data = currentYearData.filter(
+          (order) => order._id.month == index + 1
+        );
 
-          if(data.length>0)
-          {
-                return {
-                    month:month,
-                    orders:data[0].count
-                }
-          }else
-          {
-             return {
-                 month:month,
-                 orders:0
-             }
-          }
-      })
-      
+        if (data.length > 0) {
+          return {
+            month: month,
+            orders: data[0].count,
+          };
+        } else {
+          return {
+            month: month,
+            orders: 0,
+          };
+        }
+      });
+
       setChartData(orders);
     }
   }, [response]);
-
-
-  console.log(response)
-  console.log(chartData)
 
   return (
     <ChartContainer config={chartConfig}>

@@ -10,7 +10,7 @@ import Link from 'next/link'
 import React from 'react'
 import { FaPlus } from 'react-icons/fa6'
 
-const page = () => {
+const Page = () => {
   const data=[
       {
         page:"Home",
@@ -39,4 +39,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

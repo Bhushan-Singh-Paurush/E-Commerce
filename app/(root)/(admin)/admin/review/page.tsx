@@ -7,7 +7,7 @@ import { WEBSITE_HOME } from '@/routes/WebsiteRoutes'
 import React from 'react'
 
 
-const page = () => {
+const Page = () => {
   const data=[
       {
         page:"Home",
@@ -33,4 +33,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

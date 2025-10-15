@@ -3,8 +3,8 @@ import { isAuthenticated } from "@/lib/helperFunction/isAuthenticated";
 import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Media from "@/models/media.model";
 import { NextRequest } from "next/server";
-import { cloudinary } from "../../sign-cloudinary-params/route";
 import mongoose from "mongoose"
+import cloudinary from "@/lib/cloudinary";
 export async function PUT(request:NextRequest) {
     try {
         

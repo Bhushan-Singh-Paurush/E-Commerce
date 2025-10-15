@@ -3,7 +3,7 @@ import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Order from "@/models/order.model";
 import { NextRequest } from "next/server";
 
-export async function GET(request:NextRequest,{params}:{params:any}) {
+export async function GET(request:NextRequest,{params}:{params:Promise<{orderId:string}>}) {
     try {
         
         const getParam=await params
@@ -23,7 +23,7 @@ export async function GET(request:NextRequest,{params}:{params:any}) {
         return response({success:true,status:200,data:order});
  
 
-    } catch (error:any) {
-        catchError({error})
+    } catch (error) {
+        return catchError({error})
     }
 }

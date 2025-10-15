@@ -18,7 +18,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import slugify from "slugify";
 import axios from "axios";
 import toastFunction from "@/lib/toastFunction";
 import useFetch from "@/hooks/useFetch";
@@ -27,6 +26,7 @@ import Editor from "@/components/Application/Admin/Editor";
 import { Button } from "@/components/ui/button";
 import MediaModal from "@/components/Application/Admin/MediaModal";
 import Image from "next/image";
+import { ClassicEditor } from "ckeditor5";
 
 type Option = {
   label: string;
@@ -45,7 +45,7 @@ const{file}=useFetch({url:`/api/product/get-all-product?page=0&&limit=1000&&dele
   
     useEffect(() => {
     if (file && file.success) {
-      const options = file.data.items.map((product: Record<string, any>) => ({
+      const options = file.data.items.map((product: {productName:string,_id:string}) => ({
         label: product.productName,
         value: product._id,
       }));
@@ -116,24 +116,34 @@ const{file}=useFetch({url:`/api/product/get-all-product?page=0&&limit=1000&&dele
 
       if (!response.success) throw new Error(response.message);
       else toastFunction({ type: "success", message: response.message });
-    } catch (error: any) {
-      toastFunction({ type: "error", message: error.message });
-    } finally {
+    } catch (error: unknown) {
+  if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+}
+ finally {
       setLoading(false);
     }
   }
 
   
   useEffect(()=>{
-    const mrp=Number(form.getValues("mrp"))
-    const sellingPrice=Number(form.getValues("sellingPrice"))
+    const subscription=form.watch((value)=>{
+    const mrp=Number(value.mrp)
+    const sellingPrice=Number(value.sellingPrice)
    if(mrp>0 && sellingPrice>0)
    {
         form.setValue("discount",Math.round(((mrp-sellingPrice)/mrp)*100))
    }
-  },[form.watch("mrp"),form.watch("sellingPrice")])
+   })
+
+   return ()=>subscription.unsubscribe()
+  },[form])
+
   
-  function editor(event: any, editor: any) {
+  function editor(event: unknown, editor: ClassicEditor) {
     const data = editor.getData();
     form.setValue("description", data);
   }

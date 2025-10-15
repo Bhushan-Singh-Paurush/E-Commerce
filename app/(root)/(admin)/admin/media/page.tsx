@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-const mediaPage = () => {
+const MediaPage = () => {
   const[deleteType,setDeleteType]=useState<"SD" | "PD">("SD")
   const searchParams=useSearchParams()
 
@@ -26,7 +26,7 @@ const mediaPage = () => {
 
   },[searchParams])
 
-  let data=[
+  const data=[
     {
       page:"Home",
       url:"/admin/dashboard"
@@ -69,4 +69,4 @@ const mediaPage = () => {
   )
 }
 
-export default mediaPage
+export default MediaPage

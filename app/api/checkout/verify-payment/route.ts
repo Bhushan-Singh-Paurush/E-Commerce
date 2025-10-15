@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
      }
 
 
-  } catch (error:any) {
-    catchError({error})
+  } catch (error) {
+    return catchError({error})
   }
 }

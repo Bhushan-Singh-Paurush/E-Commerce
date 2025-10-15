@@ -1,6 +1,6 @@
 
 import { connection } from "@/lib/DB_Connection";
-import { response } from "@/lib/helperFunction/responeFuction";
+import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Category from "@/models/category.model";
 import Media from "@/models/media.model";
 import Product from "@/models/product.model";
@@ -38,8 +38,8 @@ export async function POST() {
        const colors = ["Red", "Blue", "Green", "Black"];
        const sizes = ["S", "M", "L", "XL", "2XL"];
 
-       let products = [];
-       let variants = [];
+       const products = [];
+       const variants = [];
 
        for (const category of categories) {
 
@@ -102,8 +102,8 @@ export async function POST() {
 
        return response({success:true, status:200, message:'Fake data generated successfully.'})
 
-   } catch (error:any) {
-       return response({success:false, status:500, message:error.message})
+   } catch (error) {
+       return catchError({error})
 
    }
 }

@@ -27,6 +27,7 @@ import Editor from "@/components/Application/Admin/Editor";
 import { Button } from "@/components/ui/button";
 import MediaModal from "@/components/Application/Admin/MediaModal";
 import Image from "next/image";
+import { ClassicEditor } from "ckeditor5";
 
 type Option = {
   label: string;
@@ -35,21 +36,25 @@ type Option = {
 
 const AddProduct = () => {
   const [loading, setLoading] = useState(false);
-  const { file, error } = useFetch({
+  const { file } = useFetch({
     url: `/api/category/get-all-category?deleteType="SD"`,
   });
   const [categoryOption, setCategoryOption] = useState<Option[]>([]);
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<{
-  _id:string,
-  secure_url:string 
-}[]>([]);
+  const [selected, setSelected] = useState<
+    {
+      _id: string;
+      secure_url: string;
+    }[]
+  >([]);
   useEffect(() => {
     if (file && file.success) {
-      const options = file.data.items.map((cat: Record<string, any>) => ({
-        label: cat.name,
-        value: cat._id,
-      }));
+      const options = file.data.items.map(
+        (cat: { name: string; _id: string }) => ({
+          label: cat.name,
+          value: cat._id,
+        })
+      );
       setCategoryOption(options);
     }
   }, [file]);
@@ -93,47 +98,59 @@ const AddProduct = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    
-
     setLoading(true);
     try {
-      if(selected.length==0)
-        return toastFunction({type:"error",message:"Please Select media"});
+      if (selected.length == 0)
+        return toastFunction({ type: "error", message: "Please Select media" });
 
-      const ids=selected.map((ele)=>ele._id)
-      
-      const { data: response } = await axios.post(
-        "/api/product/create",
-        {...values,media:ids}
-      );
+      const ids = selected.map((ele) => ele._id);
+
+      const { data: response } = await axios.post("/api/product/create", {
+        ...values,
+        media: ids,
+      });
 
       if (!response.success) throw new Error(response.message);
       else toastFunction({ type: "success", message: response.message });
-    } catch (error: any) {
-      toastFunction({ type: "error", message: error.message });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toastFunction({ type: "error", message: error.message });
+      } else {
+        toastFunction({ type: "error", message: "An unknown error occurred" });
+      }
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    const name = form.getValues("name");
+    const subscription=form.watch((value)=>{
+    const name = value.name;
     if (name) {
       form.setValue("slug", slugify(name).toLowerCase());
     }
-  }, [form.watch("name")]);
+    })
+
+    return ()=>subscription.unsubscribe()
+
+  }, [form]);
+
+  useEffect(() => {
+    const subscription=form.watch((value)=>{
+    const mrp = Number(value.mrp);
+    const sellingPrice = Number(value.sellingPrice);
+    if (mrp > 0 && sellingPrice > 0) {
+      form.setValue("discount", Math.round(((mrp - sellingPrice) / mrp) * 100));
+    }
+  })
+
+  return subscription.unsubscribe()
+  
+  }, [form]);
 
   
-  useEffect(()=>{
-    const mrp=Number(form.getValues("mrp"))
-    const sellingPrice=Number(form.getValues("sellingPrice"))
-   if(mrp>0 && sellingPrice>0)
-   {
-        form.setValue("discount",Math.round(((mrp-sellingPrice)/mrp)*100))
-   }
-  },[form.watch("mrp"),form.watch("sellingPrice")])
   
-  function editor(event: any, editor: any) {
+  function editor(event: unknown, editor: ClassicEditor) {
     const data = editor.getData();
     form.setValue("description", data);
   }
@@ -277,9 +294,9 @@ const AddProduct = () => {
                       <FormLabel>
                         Description <span className=" text-red-800">*</span>
                       </FormLabel>
-                     
-                      <Editor  onChange={editor} initialData={field.value} />
-                      
+
+                      <Editor onChange={editor} initialData={field.value} />
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -293,11 +310,28 @@ const AddProduct = () => {
                   open={open}
                   setOpen={setOpen}
                 />
-                
-                <div className=" flex items-center gap-2">{selected.length>0 && selected.map((ele,index)=>(
-                  <Image src={ele.secure_url} className=" bg-cover h-[150px] w-[130px] " width={100} height={100} alt="Image" key={index}/>
-                ))}</div>
-                <Button className=" text-lg p-8 rounded-lg border-[1px] border-border" type="button" variant="secondary" onClick={() => setOpen(true)}>Select Media</Button>
+
+                <div className=" flex items-center gap-2">
+                  {selected.length > 0 &&
+                    selected.map((ele, index) => (
+                      <Image
+                        src={ele.secure_url}
+                        className=" bg-cover h-[150px] w-[130px] "
+                        width={100}
+                        height={100}
+                        alt="Image"
+                        key={index}
+                      />
+                    ))}
+                </div>
+                <Button
+                  className=" text-lg p-8 rounded-lg border-[1px] border-border"
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setOpen(true)}
+                >
+                  Select Media
+                </Button>
               </div>
               <div className="flex flex-col gap-3 w-full">
                 <LoadingBtn

@@ -19,11 +19,10 @@ import LoadingBtn from '@/components/Application/LoadingBtn'
 import { useState } from 'react'
 import axios from 'axios'
 import toastFunction from '@/lib/toastFunction'
-import { VerifyOtp } from '../verify-otp/page'
 import UpdatePassword from '@/components/Application/UpdatePassword'
+import { VerifyOtp } from '@/components/Application/VerifyOtp'
 
-
-const page = () => {
+const Page = () => {
   const[loading,setLoading]=useState(false)
   const[verifyEmail,setVerifyEmail]=useState('')
   const[otpLoading,setOtpLoading]=useState(false)
@@ -131,4 +130,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

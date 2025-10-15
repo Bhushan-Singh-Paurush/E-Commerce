@@ -21,7 +21,7 @@ const breadCrumbData = {
     },
   ],
 };
-const page = () => {
+const Page = () => {
   const { data: Session } = useSession();
   return (
     <div>
@@ -47,4 +47,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -65,7 +65,7 @@ export async function GET(request:NextRequest){
         return response({success:true,status:200,message:"all categories",data:{items,noOfRows:numberOfOrder}});
 
     } catch (error) {
-        console.log(error)
-        catchError({error})
+       
+       return catchError({error})
     }
 }

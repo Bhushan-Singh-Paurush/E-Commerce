@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/button";
 import { IoFilterSharp } from "react-icons/io5";
 interface IFilterationProps {
   limit: number;
-  setLimit: Function;
+  setLimit: React.Dispatch<React.SetStateAction<number>>;
   sorting: string;
-  setSorting: Function;
+  setSorting: React.Dispatch<React.SetStateAction<string>>;
   isMobileView: boolean;
-  setIsMobileView: Function;
+  setIsMobileView: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Filteration = (props:IFilterationProps) => {

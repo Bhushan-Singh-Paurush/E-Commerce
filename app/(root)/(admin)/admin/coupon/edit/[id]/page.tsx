@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import useFetch from "@/hooks/useFetch";
 import toastFunction from "@/lib/toastFunction";
 import { zSchema } from "@/lib/zodSchema";
-import { ADMIN_CATEGORY, ADMIN_EDIT_CATEGORY } from "@/routes/AdminPanelRoutes";
+import { ADMIN_CATEGORY } from "@/routes/AdminPanelRoutes";
 import { WEBSITE_HOME } from "@/routes/WebsiteRoutes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -23,10 +23,10 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
-const page = () => {
+const Page = () => {
   const { id } = useParams();
   const [updateLoading, setUpdateLoading] = useState(false);
-  const { loading, file, refetchFunction, error } = useFetch({
+  const {file } = useFetch({
     url: `/api/coupon/edit/${id}`,
   });
   const formSchema = zSchema.pick({
@@ -58,7 +58,7 @@ const page = () => {
         validity:new Date(file?.data?.validity)
       });
     }
-  }, [file]);
+  }, [file,form]);
   
   
   function isUpdated(){
@@ -91,11 +91,14 @@ const page = () => {
     {
         return toastFunction({type:"error",message:"No change Found"})
     }
-    } catch (error: any) {
-      toastFunction({ type: "error", message: error.message });
-    } finally {
-      setUpdateLoading(false);
-    }
+    } catch (error: unknown) {
+  if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+}
+
   }
    const data=[
         {
@@ -205,4 +208,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

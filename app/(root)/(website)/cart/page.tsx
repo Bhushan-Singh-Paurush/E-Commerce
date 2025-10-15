@@ -4,13 +4,14 @@ import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { WEBSITE_CART, WEBSITE_SHOP } from "@/routes/WebsiteRoutes";
 import { Table, Thead, Th, Tbody, Tr, Td } from "react-super-responsive-table";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
 import image_placeholder from "@/public/assets/images/img-placeholder.webp";
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { decrementQty, incrementQty, removeProduct } from "@/slices/cart";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { Product } from "@/app/api/checkout/verify-cart/route";
 const breadCrumbData = {
   title: "Cart",
   data: [
@@ -20,23 +21,23 @@ const breadCrumbData = {
     },
   ],
 };
-const page = () => {
-  const cart = useSelector((state: any) => state.cart);
+const Page = () => {
+  const cart = useAppSelector((state) => state.cart);
   const [subTotal, setSubTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const dispatch = useDispatch();
+
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (cart.products.length > 0) {
       const totalPrice = cart.products.reduce(
-        (acc: number, product: Record<string, any>) =>
+        (acc: number, product: {qty:number,sellingPrice:number}) =>
           acc + (product.qty*product.sellingPrice),
         0
       );
       setSubTotal(totalPrice);
 
       const totalDiscount = cart.products.reduce(
-        (acc: number, product: Record<string, any>) =>
+        (acc: number, product: {qty:number,mrp:number,sellingPrice:number}) =>
           acc + ((product.qty*product.mrp) - (product.qty*product.sellingPrice)),
         0
       );
@@ -48,9 +49,6 @@ const page = () => {
     }
   }, [cart]);
 
-  useEffect(() => {
-    setIsMuted(true);
-  }, []);
 
   return (
     <div>
@@ -79,7 +77,7 @@ const page = () => {
             </Thead>
 
             <Tbody>
-              {cart.products.map((product: Record<string, any>, index: any) => (
+              {cart.products.map((product: Product, index: number) => (
                 <Tr key={index}>
                   <Td className=" py-2 pl-2">
                     <div className=" w-fit flex items-center gap-2">
@@ -99,7 +97,7 @@ const page = () => {
                   </Td>
 
                   <Td>
-                    {parseInt(product.sellingPrice).toLocaleString("en-IN", {
+                    {product.sellingPrice.toLocaleString("en-IN", {
                       style: "currency",
                       currency: "INR",
                     })}
@@ -139,7 +137,7 @@ const page = () => {
 
                   <Td>
                     {(
-                      parseInt(product.qty) * parseInt(product.sellingPrice)
+                      product.qty * product.sellingPrice
                     ).toLocaleString("en-IN", {
                       style: "currency",
                       currency: "INR",
@@ -201,4 +199,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

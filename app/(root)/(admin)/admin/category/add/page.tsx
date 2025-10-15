@@ -15,7 +15,7 @@ import slugify from "slugify"
 import axios from 'axios'
 import toastFunction from '@/lib/toastFunction'
 
-const page = () => {
+const Page = () => {
   const[loading,setLoading]=useState(false)  
   const data=[
     {
@@ -56,21 +56,28 @@ const page = () => {
                 toastFunction({type:"success",message:response.message})
 
                 
-          } catch (error:any) {
-               toastFunction({type:"error",message:error.message}) 
+          } catch (error:unknown) {
+            if(error instanceof Error)
+               toastFunction({type:"error",message:error.message})
+            else
+               toastFunction({type:"error",message:"An unknown error occurred"})  
           }finally{
               setLoading(false)
           }
   }
 
-  useEffect(()=>{
-      const name=form.getValues("name")
-      if(name)
-      {
-        form.setValue("slug",slugify(name).toLowerCase())
-      }
 
-  },[form.watch("name")])
+useEffect(() => {
+  const subscription = form.watch((value) => {
+    const name = value.name;
+    if (name) {
+      form.setValue("slug", slugify(name).toLowerCase());
+    }
+  });
+
+  return () => subscription.unsubscribe();
+}, [form]);
+
 
   return (
      <div className='px-4 pt-[80px]'>
@@ -127,4 +134,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

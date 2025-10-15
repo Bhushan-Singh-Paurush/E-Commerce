@@ -2,11 +2,19 @@
 import useFetch from '@/hooks/useFetch'
 import Link from 'next/link'
 import React from 'react'
-import Image from 'next/image'
 import ProductBox from './ProductBox'
 import { WEBSITE_SHOP } from '@/routes/WebsiteRoutes'
+interface Product{
+   media:{
+     secure_url:string
+   }[],
+   slug:string,
+   mrp:number,
+   name:string,
+   sellingPrice:number
+}
 const FeaturedProducts = () => {
-    const{loading,error,file}=useFetch({url:"api/product/get-featured-products"})
+    const{loading,file}=useFetch({url:"api/product/get-featured-products"})
     
 
     
@@ -24,7 +32,7 @@ const FeaturedProducts = () => {
             <Link href={WEBSITE_SHOP} className=' underline text-violet-800'>View All</Link>
             </div> 
 
-            <div className=' grid lg:grid-cols-4 grid-cols-2  gap-10'>{file.data.map((product:Record<string,any>,index:any)=>(
+            <div className=' grid lg:grid-cols-4 grid-cols-2  gap-10'>{file.data.map((product:Product,index:number)=>(
                  
                  
                 <ProductBox product={product} key={index}/> 

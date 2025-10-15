@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zSchema } from "@/lib/zodSchema";
-import { ADMIN_ADD_PRODUCT, ADMIN_PRODUCT } from "@/routes/AdminPanelRoutes";
+import { ADMIN_PRODUCT } from "@/routes/AdminPanelRoutes";
 import { WEBSITE_HOME } from "@/routes/WebsiteRoutes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import MediaModal from "@/components/Application/Admin/MediaModal";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { ClassicEditor } from "ckeditor5";
 
 
 type Option = {
@@ -55,7 +56,7 @@ const EditProduct = () => {
 
   useEffect(() => {
     if (categoryResponse && categoryResponse.success) {
-      const options = categoryResponse.data.items.map((cat: Record<string, any>) => ({
+      const options = categoryResponse.data.items.map((cat: {name:string,_id:string}) => ({
         label: cat.name,
         value: cat._id,
       }));
@@ -101,7 +102,7 @@ const EditProduct = () => {
   
   function isUpdated(){
     const values=form.getValues();
-    const dbMedia= JSON.stringify(productResponse.data.media.map((ele:Record<string,any>)=>{
+    const dbMedia= JSON.stringify(productResponse.data.media.map((ele:{_id:string,secure_url:string})=>{
       return {
              _id:ele._id,
              secure_url:ele.secure_url
@@ -141,40 +142,51 @@ const EditProduct = () => {
       return toastFunction({type:"error",message:"No Change Found"})
     }
     
-    catch (error: any) {
-      console.log("this is error",error)
-      console.log(error);
-      toastFunction({ type: "error", message: error.message });
-    } finally {
+   catch (error: unknown) {
+  if (error instanceof Error) {
+    toastFunction({ type: "error", message: error.message });
+  } else {
+    toastFunction({ type: "error", message: "An unknown error occurred" });
+  }
+}
+ finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    const name = form.getValues("name");
+    const subscription=form.watch((value)=>{
+    const name = value.name;
     if (name) {
       form.setValue("slug", slugify(name).toLowerCase());
     }
-  }, [form.watch("name")]);
+  })
+  return subscription.unsubscribe()
+  }, [form]);
 
   
   useEffect(()=>{
-    const mrp=Number(form.getValues("mrp"))
-    const sellingPrice=Number(form.getValues("sellingPrice"))
+    const subscription=form.watch((value)=>{
+    const mrp=Number(value.mrp)
+    const sellingPrice=Number(value.sellingPrice)
    if(mrp>0 && sellingPrice>0)
    {
         form.setValue("discount",Math.round(((mrp-sellingPrice)/mrp)*100))
    }
-  },[form.watch("mrp"),form.watch("sellingPrice")])
+   })
+   return ()=>subscription.unsubscribe()
+  },[form])
+
+
   
-  function editor(event: any, editor: any) {
+  function editor(event: unknown, editor: ClassicEditor) {
     const data = editor.getData();
     form.setValue("description", data);
   }
 
   useEffect(()=>{
     if(productResponse && productResponse.success){
-      const selectedOption=productResponse?.data?.media.map((item:Record<string,any>)=>{
+      const selectedOption=productResponse?.data?.media.map((item:{_id:string,secure_url:string})=>{
         return {
               _id:item._id,
               secure_url:item.secure_url 
@@ -193,7 +205,7 @@ const EditProduct = () => {
           _id:productResponse.data._id
        })
     }
-  },[productResponse])
+  },[productResponse,form])
 
 
   return (

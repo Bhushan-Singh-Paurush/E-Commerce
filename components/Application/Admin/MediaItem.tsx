@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -12,7 +11,10 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-
+interface IMedia{
+    secure_url:string
+    _id:string
+}
 const MediaItem = ({
   file,
   selected,
@@ -20,11 +22,11 @@ const MediaItem = ({
   deleteType,
   handleDelete
 }: {
-  file: Record<string, any>;
+  file: IMedia;
   selected: Array<string>;
-  setSelected: Function;
+  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
   deleteType: string;
-  handleDelete:Function
+  handleDelete:({ids,deleteType}:{ids:Array<string>,deleteType:string})=>void
 }) => {
 
   async function handleMediaCopy(){
@@ -35,7 +37,7 @@ const MediaItem = ({
         if(selected.includes(file._id))
           setSelected(selected.filter((id)=>id!==file._id))
         else
-          setSelected((pre:string)=>([...pre,file._id])) 
+          setSelected((pre:string[])=>[...pre,file._id]) 
   }
   return (
     <div className="w-[200] h-[200px] p-4 rounded-xl border-[1px] dark:border-gray-800 border-gray-300 relative">

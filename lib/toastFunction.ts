@@ -1,6 +1,6 @@
 import {Bounce, toast} from "react-toastify"
 export default function toastFunction({type,message}:{type:string,message:string}){
-                let options={
+                const options={
                             autoClose: 1000,
                             hideProgressBar: true,
                             closeOnClick: true,

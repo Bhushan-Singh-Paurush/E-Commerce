@@ -2,18 +2,18 @@ import ProductDetail from "@/components/Application/Website/ProductDetail";
 import axios from "axios";
 import React from "react";
 
-const page = async ({
+const Page = async ({
   params,
   searchParams,
 }: {
-  params: any;
-  searchParams: any;
+  params: Promise<{slug:string}>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) => {
-  const getParams = await params;
+  const getParams =await params;
 
   const slug = getParams.slug;
 
-  const getSearchParams = await searchParams;
+  const getSearchParams =await searchParams;
 
   const color = getSearchParams.color;
 
@@ -48,4 +48,4 @@ const page = async ({
   );
 };
 
-export default page;
+export default Page;

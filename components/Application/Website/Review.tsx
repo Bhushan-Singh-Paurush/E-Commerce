@@ -14,12 +14,23 @@ import {
 } from "@/components/ui/card";
 import { Rating } from "@mui/material";
 import useWindowSize from "@/hooks/useWindowSize";
+ interface ReviewResponse{
+    review:string,
+    rating:number,
+    user:{
+       name:string
+    },
+    title:string,
+}
 const Review = () => {
   const { file } = useFetch({ url: "/api/website/get-reviews" });
-  const [response, setResponse] = useState<Array<Record<string, any>>>([]);
+  const [response, setResponse] = useState<ReviewResponse[]>([]);
+  
   useEffect(() => {
     if (file && file.success) setResponse(file.data);
   }, [file]);
+  
+  
   const windowSize=useWindowSize()
   const[slidesToShow,setSlidesToShow]=useState(3)
 

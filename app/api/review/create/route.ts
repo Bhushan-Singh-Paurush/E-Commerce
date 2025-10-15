@@ -31,8 +31,7 @@ export async function POST(request:NextRequest) {
     
     return response({success:true,status:200,message:"Review created successfully"});
 
-    } catch (error:any) {
-        console.log(error)
-        catchError({error})
+    } catch (error) {
+       return catchError({error})
      }
 }

@@ -25,7 +25,7 @@ export async function GET() {
       
       return response({success:true,status:200,data:{totalCategory,totalProduct,TotalCustomers,totalOrders}})
  
-  } catch (error:any) {
-    catchError({error})
+  } catch (error) {
+    return catchError({error})
   }
 }

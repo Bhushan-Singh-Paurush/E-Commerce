@@ -2,7 +2,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import useFetch from '@/hooks/useFetch';
 import { ADMIN_CATEGORY, ADMIN_CUSTOMERS, ADMIN_ORDERS, ADMIN_PRODUCT } from '@/routes/AdminPanelRoutes';
-import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react'
 import { BiCategory } from "react-icons/bi";

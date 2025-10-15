@@ -16,8 +16,7 @@ export async function GET(){
         
         return response({success:true,status:200,message:"All Products",data:products})
 
-        } catch (error:any) {
-            console.log(error)
-            catchError({error})
+        } catch (error) {
+          return  catchError({error})
        }            
 }

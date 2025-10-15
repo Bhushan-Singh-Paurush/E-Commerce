@@ -12,7 +12,7 @@ import ReviewTable from './ReviewTable'
 import CountOverview from './CountOverview'
 
 
-const page = () => {
+const Page = () => {
   return (
     <div className='px-4 pt-[100px] pb-[40px] flex flex-col gap-10'>
      <CountOverview/>   
@@ -69,4 +69,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

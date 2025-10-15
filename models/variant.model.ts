@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Product from "./product.model";
 import Media from "./media.model";
-interface IVariant {
+export interface IVariant {
   product: mongoose.Schema.Types.ObjectId;
   sku: string;
   color: string;

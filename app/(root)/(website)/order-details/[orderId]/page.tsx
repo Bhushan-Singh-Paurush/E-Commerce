@@ -5,6 +5,8 @@ import Image from "next/image";
 import image_placeholder from "@/public/assets/images/img-placeholder.webp";
 import Link from "next/link";
 import { WEBSITE_PRODUCT_DETAILS } from "@/routes/WebsiteRoutes";
+import { Product } from "@/app/api/checkout/verify-cart/route";
+
 const breadCrumbData = {
   title: "Order Detail",
   data: [
@@ -14,16 +16,16 @@ const breadCrumbData = {
     },
   ],
 };
-const OrderDetails = async ({ params }: { params: any }) => {
-  const getParams = await params;
 
-  const order_id = getParams.orderId;
 
+const OrderDetails = async ({ params }:{params:Promise<{orderId:string}>}) => {
+
+  const getParams =await params;
+  const order_id=getParams.orderId
   const { data: response } = await axios.get(
     `${process.env.NEXT_PUBLIC_URL}/api/order/get/${order_id}`
   );
 
-  console.log(response);
 
   if (!response.success)
     return (
@@ -67,7 +69,7 @@ const OrderDetails = async ({ params }: { params: any }) => {
                 </thead>
                 <tbody>
                   {response?.data?.products?.map(
-                    (product: Record<string, any>, index: any) => (
+                    (product: Product, index: number) => (
                       <tr key={index}>
                         <td className=" flex items-center gap-2 pl-2">
                           <Image
@@ -89,7 +91,7 @@ const OrderDetails = async ({ params }: { params: any }) => {
                           </div>
                         </td>
                         <td>
-                          {parseInt(product?.sellingPrice).toLocaleString(
+                          {product?.sellingPrice.toLocaleString(
                             "en-IN",
                             {
                               style: "currency",

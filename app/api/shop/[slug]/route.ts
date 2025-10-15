@@ -3,9 +3,10 @@ import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Product from "@/models/product.model";
 import Review from "@/models/review.model";
 import Variant from "@/models/variant.model";
+import { FilterQuery } from "mongoose";
 import { NextRequest } from "next/server";
 
-export async function GET(request:NextRequest,{params}:{params:any})
+export async function GET(request:NextRequest,{params}:{params:Promise<{slug:string}>})
 {
           try {
             
@@ -22,13 +23,10 @@ export async function GET(request:NextRequest,{params}:{params:any})
 
               const size=searchParams.get("size")
 
-              let productFilter:{slug:string,deletedAt:Date | null}
-
-              productFilter={
+              const productFilter:{slug:string,deletedAt:Date | null}={
                   slug:slug,
                   deletedAt:null
               }
-              
           
               await connection()
               
@@ -62,7 +60,7 @@ export async function GET(request:NextRequest,{params}:{params:any})
               
               sizes=sizes.length>0 ? sizes.map((item)=>item.size) : []
               
-              let variantFilter:Record<string,any>={}
+              const variantFilter:FilterQuery<typeof Variant>={}
 
               variantFilter.deletedAt=null
               
@@ -111,7 +109,7 @@ export async function GET(request:NextRequest,{params}:{params:any})
                 review
               }})
 
-          } catch (error:any) {
-            catchError({error})
+          } catch (error) {
+           return catchError({error})
           }
 }

@@ -4,7 +4,7 @@ import { catchError, response } from "@/lib/helperFunction/responeFuction";
 import Category from "@/models/category.model";
 import { NextRequest } from "next/server";
 
-export async function GET(request:NextRequest,{params}:{params:any}) {
+export async function GET(request:NextRequest,{params}:{params:Promise<{id:string}>}) {
     try {
         
         const{isAuth}=await isAuthenticated({role:"admin"})
@@ -12,8 +12,8 @@ export async function GET(request:NextRequest,{params}:{params:any}) {
         if(!isAuth)
            return response({success:false,status:403,message:"Unauthenticated"}); 
         
-        const{id}=await params
-        
+        const getParams=await params
+        const id=getParams.id
         if(!id)
             return response({success:false,status:401,message:"Missing or invalid input"});
         
@@ -33,7 +33,7 @@ export async function GET(request:NextRequest,{params}:{params:any}) {
         return response({success:true,status:200,data:category});
 
 
-    } catch (error:any) {
-        catchError({error})
+    } catch (error) {
+        return catchError({error})
     }
 }

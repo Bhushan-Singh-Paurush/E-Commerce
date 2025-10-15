@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     
     return response({success:true,status:200,data:order})
     
-  } catch (error:any) {
-    catchError({error})
+  } catch (error) {
+    return catchError({error})
   }
 }

@@ -17,7 +17,7 @@ import ThemeSwitch from "../Admin/ThemeSwitch";
 import Search from "./Search";
 
 const Header = () => {
-  const{data:session,status}= useSession();
+  const{data:session}= useSession();
   const [isMobileView, setIsMobilView] = useState(false);
   const[isShow,setIsShow]=useState(false)
 

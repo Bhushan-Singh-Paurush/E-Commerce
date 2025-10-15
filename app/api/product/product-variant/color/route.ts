@@ -21,7 +21,7 @@ export async function GET(){
 
         return response({success:true,status:200,data:colors})
 
-    } catch (error:any) {
-        catchError({error})
+    } catch (error) {
+      return  catchError({error})
     }
 }

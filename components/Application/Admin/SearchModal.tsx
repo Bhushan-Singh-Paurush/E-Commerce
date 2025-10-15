@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import Fuse from "fuse.js"
 import search from "@/components/Application/Admin/search"
 import Link from 'next/link'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+
 const options={
     keys: [
 		"label",
@@ -19,10 +20,23 @@ const options={
 	]
 }
 
-const SearchModal = ({open,setOpen}:{open:boolean,setOpen:Function}) => {
+interface Result{
+  
+         label: string,
+         description: string,
+         url: string,
+         keywords: string[]
+  
+}
+
+const SearchModal = ({open,setOpen}:{open:boolean,setOpen: React.Dispatch<React.SetStateAction<boolean>>}) => {
   const[query,setQuery]=useState('')  
-  const[result,setResult]=useState<any>([])
-  const fuse=new Fuse(search,options)
+  const[result,setResult]=useState<Result[]>([])
+  
+  const fuse=useMemo(()=>{
+    return new Fuse(search,options)
+  },[])
+
   useEffect(()=>{
     if(query.length===0)
          setResult([])
@@ -33,7 +47,7 @@ const SearchModal = ({open,setOpen}:{open:boolean,setOpen:Function}) => {
        setResult(items)
     }
 
-  },[query])
+  },[query,fuse])
 
   return (
 
@@ -46,7 +60,7 @@ const SearchModal = ({open,setOpen}:{open:boolean,setOpen:Function}) => {
       </DialogDescription>
     </DialogHeader>
     <Input type='text' value={query} onChange={(e)=>setQuery(e.target.value)}/>
-    <ul className=' max-h-[300px] flex flex-col gap-4 overflow-scroll'>{result.map((item:Record<string,any>,index:number)=>(
+    <ul className=' max-h-[300px] flex flex-col gap-4 overflow-scroll'>{result.map((item:Result,index:number)=>(
        
        <li key={index}>
               

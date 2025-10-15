@@ -1,6 +1,7 @@
+import { Product } from "@/app/api/checkout/verify-cart/route";
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState: { count: number; products: Array<Record<string, any>> } = {
+const initialState: { count: number; products: Product[] } = {
   count: 0,
   products: [],
 };

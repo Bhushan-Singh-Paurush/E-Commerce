@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -6,22 +7,24 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import loadingImg from "@/public/assets/images/loading.svg";
 import Image from "next/image";
 import { Checkbox } from "@/components/ui/checkbox";
 interface MediaModalProps {
   open: boolean;
-  setOpen: Function;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selected: Array<{
     _id: string;
     secure_url: string;
   }>;
-  setSelected: Function;
+  setSelected: React.Dispatch<React.SetStateAction<{
+    _id: string;
+    secure_url: string;
+  }[]>>;
   isMulti: boolean;
 }
 const MediaModal = ({
@@ -33,7 +36,7 @@ const MediaModal = ({
 }: MediaModalProps) => {
   const [current, setCurrent] = useState<Array<{ _id: string; secure_url: string }>>(selected)
 
-  const { data, isLoading, isError, error, fetchNextPage } = useInfiniteQuery({
+  const { data, isLoading, isError, error } = useInfiniteQuery({
     queryKey: ["mediaModal"],
     queryFn: async ({ pageParam }) => {
       const { data: response } = await axios.get(
@@ -108,7 +111,7 @@ const MediaModal = ({
         ) : (
           <>
             {data &&
-              data.pages?.[0].mediaDate.map((media: Record<string, any>) => (
+              data.pages?.[0].mediaDate.map((media:{_id:string,secure_url:string}) => (
                 <label
                   key={media._id}
                   onClick={() =>

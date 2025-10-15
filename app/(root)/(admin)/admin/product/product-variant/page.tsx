@@ -3,14 +3,14 @@ import { BreadCrumbFunction } from '@/components/Application/Admin/BreadCrumbFun
 import DataTable from '@/components/Application/Admin/DataTable'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import {ADMIN_ADD_PRODUCT_VARIANT, ADMIN_EDIT_PRODUCT, ADMIN_EDIT_PRODUCT_VARIANT, ADMIN_PRODUCT, ADMIN_PRODUCT_VARIANT } from '@/routes/AdminPanelRoutes'
+import {ADMIN_ADD_PRODUCT_VARIANT, ADMIN_EDIT_PRODUCT_VARIANT, ADMIN_PRODUCT, ADMIN_PRODUCT_VARIANT } from '@/routes/AdminPanelRoutes'
 import { WEBSITE_HOME } from '@/routes/WebsiteRoutes'
 import Link from 'next/link'
 
 import React from 'react'
 import { FaPlus } from 'react-icons/fa6'
 
-const page = () => {
+const Page = () => {
   const data=[
       {
         page:"Home",
@@ -43,4 +43,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

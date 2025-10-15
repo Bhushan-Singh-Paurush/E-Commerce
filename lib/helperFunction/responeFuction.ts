@@ -1,18 +1,6 @@
 import { NextResponse } from "next/server";
 
-type ResponesProps = {
-  success: boolean;
-  status: number;
-  message?: string;
-  data?: Record<string, any>;
-};
-
-export const response = ({
-  success,
-  status,
-  message,
-  data = {},
-}: ResponesProps) => {
+export function response<T=unknown>({success,status,message,data}:{success:boolean,status:number,message?:string,data?:T}){
   return NextResponse.json({
     success,
     status,
@@ -21,23 +9,35 @@ export const response = ({
   });
 };
 
-export const catchError = ({error,customMessage}: {error: any,customMessage?: string}) => {
-  let message: string;
-  if(error.code===11000 && error.keyPattern)
-  {
-    const key=Object.keys(error.keyPattern).join(", ")
-    message=`These are duplicate fields ${key}`
-    error.code=400
-  }
-  else if (process.env.NODE_ENV == "development") {
-    message = error.message || "Internal server error";
-  } 
-  else 
-    message = customMessage || "Internal server error";
+interface MongoError{
+  code?:number,
+  message?:string,
+  keyPattern?:Record<string,number>
+}
 
- return response({
-  success:false,
-  status:error.code || 500,
-  message:message
- });
-};
+interface CustomErrorProps{
+  error:unknown,
+  customMessage?:string
+}
+
+export function catchError({error,customMessage}:CustomErrorProps){
+         let message="Inter server error"
+         let status=500
+
+         if(error instanceof Error)
+         message=error.message
+
+         if(process.env.NODE_ENV==="development" && customMessage){
+          message=customMessage
+          status=400
+         } 
+
+        const mongoError=error as MongoError
+
+        if(mongoError?.code===11000 && mongoError?.keyPattern){
+         const keys=Object.keys(mongoError.keyPattern).join(", ")
+         message=`Duplicate fields: ${keys}`
+         status=400
+        }
+        return response({success:false,status,message})
+}

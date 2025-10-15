@@ -28,7 +28,7 @@ export async function GET(request:NextRequest){
          await connection();
 
 
-         let items=await Review.aggregate([
+         const items=await Review.aggregate([
             {
                 $match:filter
             },
@@ -71,6 +71,6 @@ export async function GET(request:NextRequest){
         return response({success:true,status:200,message:"all Reviews",data:{items,noOfRows:numberOfReview}});
 
     } catch (error) {
-        catchError({error})
+      return  catchError({error})
     }
 }
